@@ -1,4 +1,6 @@
-# Mergington High School Management System - AI Coding Guidelines
+# Mergington High School Management System - GitHub Copilot Instructions
+
+**ALWAYS follow these instructions first and fallback to search or bash commands ONLY when information here is incomplete or found to be in error.**
 
 ## Entendimento do arquivo
 
@@ -6,23 +8,149 @@
 
 [ ] - Aprendi sobre como configurar o copilot-instructions.
 
+## Working Effectively
+
+**Bootstrap, build, and test the repository:**
+
+1. **Check Java version** (MUST be Java 21):
+   ```bash
+   java -version
+   mvn -version
+   ```
+
+2. **Start MongoDB** (REQUIRED before any application operations):
+   ```bash
+   docker run -d -p 27017:27017 --name mongodb mongo:7.0
+   ```
+
+3. **Build the project** - NEVER CANCEL, set timeout to 90+ minutes:
+   ```bash
+   mvn clean install
+   ```
+   - **Expected time**: 37 seconds for full build with tests
+   - **NEVER CANCEL**: Build may download dependencies on first run
+
+4. **Run tests only** - NEVER CANCEL, set timeout to 30+ minutes:
+   ```bash
+   mvn test
+   ```
+   - **Expected time**: 11 seconds
+   - **Tests run**: 20 tests across domain, application, and architecture layers
+
+5. **Quick compile without tests**:
+   ```bash
+   mvn clean compile -DskipTests
+   ```
+   - **Expected time**: 4 seconds
+
+6. **Package without tests**:
+   ```bash
+   mvn package -DskipTests
+   ```
+   - **Expected time**: 2 seconds
+
+## Running the Application
+
+**ALWAYS run the bootstrapping steps first.**
+
+1. **Start the application**:
+   ```bash
+   SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
+   ```
+   - **Expected startup time**: 3 seconds
+   - **Port**: 8080
+   - **Profile**: Use `dev` profile for CORS configuration
+
+2. **Access points**:
+   - **Frontend**: http://localhost:8080
+   - **API**: http://localhost:8080/activities
+   - **Health check**: http://localhost:8080/actuator/health
+
+## Validation
+
+**ALWAYS manually validate any new code through complete end-to-end scenarios after making changes.**
+
+### Required Validation Scenarios
+
+1. **API Functionality Test**:
+   ```bash
+   curl -s http://localhost:8080/activities | jq 'keys | length'
+   ```
+   - **Expected result**: Returns count of 6 activities
+
+2. **Filter by day test**:
+   ```bash
+   curl -s "http://localhost:8080/activities?day=Monday" | jq 'keys | length'
+   ```
+   - **Expected result**: Returns count of 2 Monday activities
+
+3. **Student registration test** (MUST use correct teacher credentials):
+   ```bash
+   curl -s -X POST http://localhost:8080/activities/"Clube%20de%20Xadrez"/signup \
+        -H "Content-Type: application/x-www-form-urlencoded" \
+        -d "email=newstudent@mergington.edu&teacher_username=maria"
+   ```
+   - **Expected result**: `{"message":"Inscreveu newstudent@mergington.edu em Clube de Xadrez"}`
+
+4. **Student unregistration test**:
+   ```bash
+   curl -s -X POST http://localhost:8080/activities/"Clube%20de%20Xadrez"/unregister \
+        -H "Content-Type: application/x-www-form-urlencoded" \
+        -d "email=newstudent@mergington.edu&teacher_username=maria"
+   ```
+   - **Expected result**: `{"message":"Desinscreveu newstudent@mergington.edu de Clube de Xadrez"}`
+
+5. **Frontend validation**:
+   ```bash
+   curl -s http://localhost:8080/ | grep -c "Colégio Mergington"
+   ```
+   - **Expected result**: Returns count of 3 occurrences
+
+### Coverage and Quality Checks
+
+**Always run coverage report after testing**:
+```bash
+mvn jacoco:report
+```
+- **Coverage report location**: `target/site/jacoco/index.html`
+
+**Run specific test classes**:
+```bash
+mvn test -Dtest=ActivityTest
+mvn test -Dtest=StudentRegistrationUseCaseTest
+```
+
 ## Architecture Overview
 
-This is a **Clean Architecture** Spring Boot application managing extracurricular activities. The codebase follows strict layer separation:
+This is a **Clean Architecture** Spring Boot application (38 Java files total) with strict layer separation:
 
-- **Domain Layer** (`src/main/java/.../domain/`): Pure business logic with entities, value objects, and repository interfaces
-- **Application Layer** (`src/main/java/.../application/`): Use cases and DTOs that orchestrate domain logic
-- **Infrastructure Layer** (`src/main/java/.../infrastructure/`): Database implementations, configurations, and external concerns
+- **Domain Layer** (`src/main/java/.../domain/`): Pure business logic, entities, value objects, repository interfaces
+- **Application Layer** (`src/main/java/.../application/`): Use cases and DTOs
+- **Infrastructure Layer** (`src/main/java/.../infrastructure/`): Database, configurations, migrations
 - **Presentation Layer** (`src/main/java/.../presentation/`): REST controllers and mappers
 
-**Key Rule**: Dependencies flow inward - domain has no outward dependencies, application depends on domain, infrastructure implements domain interfaces.
+**CRITICAL**: Dependencies flow inward - domain has no outward dependencies.
 
-## Critical Development Patterns
+## Key Configuration Data
 
-### Entity Validation Pattern
+### Teacher Credentials (for testing)
+**Default teachers** (usernames for API testing):
+- `maria` (Maria Rodriguez, TEACHER role, password: 123123)
+- `jose` (Prof. Jose Chen, TEACHER role, password: 123123)
+- `paulo` (Paulo Silva, ADMIN role, password: 123123)
 
-All domain entities validate themselves in constructors and setters:
+### Activities Available
+**Pre-seeded activities** (via Mongock migrations):
+- Clube de Xadrez (Tuesday, Thursday 15:30-17:00)
+- Clube de Programação (Monday, Wednesday, Friday 14:00-15:30)
+- Clube de Arte (Tuesday, Thursday 16:00-17:30)
+- Time de Futebol (Monday, Wednesday, Friday 16:00-18:00)
+- Banda de Música (Tuesday, Thursday 15:00-16:30)
+- Serviço Comunitário (Saturday 09:00-12:00)
 
+### Development Patterns
+
+**Entity Validation Pattern** - All domain entities validate in constructors:
 ```java
 private String validateName(String name) {
     if (name == null || name.trim().isEmpty()) {
@@ -32,90 +160,61 @@ private String validateName(String name) {
 }
 ```
 
-### Repository Implementation Pattern
+**Repository Pattern** - Interfaces in `domain/repositories/`, implementations in `infrastructure/persistence/`
 
-- Interfaces in `domain/repositories/` (e.g., `ActivityRepository.java`)
-- Implementations in `infrastructure/persistence/` with both Spring Data (`MongoActivityRepository`) and domain adapters (`ActivityRepositoryImpl`)
+**Use Case Pattern** - Always validate teacher authentication first, use domain repositories through interfaces
 
-### Use Case Pattern
+## Common Tasks Reference
 
-Application services in `application/usecases/` coordinate domain operations:
+### Repository Structure
+```
+src/main/java/com/mergingtonhigh/schoolmanagement/
+├── domain/entities/        # Activity.java, Teacher.java
+├── domain/repositories/    # Repository interfaces
+├── domain/valueobjects/    # Email.java, ScheduleDetails.java
+├── application/usecases/   # Business logic coordination
+├── application/dtos/       # Data transfer objects
+├── infrastructure/        # MongoDB, migrations, config
+└── presentation/          # REST controllers
+```
 
-- Always validate teacher authentication first
-- Use domain repositories through interfaces
-- Transform entities to DTOs for external communication
+### Static Resources
+- **Location**: `src/main/resources/static/`
+- **Files**: `index.html`, `app.js`, `styles.css`
+- **Frontend**: Vanilla JavaScript with responsive design
 
-### Error Handling Convention
+### Build Artifacts
+- **JAR location**: `target/school-management-system-0.0.1-SNAPSHOT.jar`
+- **Coverage**: `target/site/jacoco/index.html`
+- **Executable JAR**: Includes all dependencies (Spring Boot fat JAR)
 
-Controllers return specific HTTP status codes:
+### Environment Variables
+**Optional overrides** (defaults in parentheses):
+- `TEACHER_MARIA_PASSWORD` (123123)
+- `TEACHER_JOSE_PASSWORD` (123123)
+- `DIRECTOR_PAULO_PASSWORD` (123123)
+- `SPRING_PROFILES_ACTIVE` (use `dev` for development)
 
-- `401` for authentication failures
-- `404` for "not found" messages
-- `400` for validation errors
-  Use `Map.of("detail", message)` for error responses.
+## Error Handling and Debugging
 
-## Essential Commands & Workflows
+**HTTP Status Codes**:
+- `401`: Authentication failures (invalid teacher credentials)
+- `404`: Activity not found
+- `400`: Validation errors (invalid email format, etc.)
 
-### Development Environment
+**Authentication Requirements**:
+- Student registration/unregistration requires valid teacher credentials
+- Use form data: `email=student@email.com&teacher_username=validteacher`
 
-1. **Database**: MongoDB required - use Docker: `docker run -d -p 27017:27017 --name mongodb mongo:latest`
-2. **Environment**: Always use Java 21 - set `JAVA_HOME` and use `mvn -version` to verify
-3. **Development Profile**: Set `SPRING_PROFILES_ACTIVE=dev` for CORS configuration
+**MongoDB Connection**:
+- **Default**: `localhost:27017`
+- **Database**: `mergington_high`
+- **Auto-migration**: Mongock runs on startup
 
-### Build & Test Commands
+## Critical Warnings
 
-- **Build**: `mvn clean install` (includes tests)
-- **Quick package**: `mvn package -DskipTests`
-- **Run application**: `mvn spring-boot:run`
-- **Test specific class**: `mvn test -Dtest=ActivityTest`
-- **Coverage report**: `mvn jacoco:report`
-
-### Database Migrations (Mongock)
-
-- Migrations in `infrastructure/migrations/V001_InitialDatabaseSetup.java`
-- Auto-executed on startup with `@ChangeUnit` annotation
-- Uses environment variables for passwords (e.g., `TEACHER_RODRIGUEZ_PASSWORD`)
-- Includes rollback methods with `@RollbackExecution`
-
-## Key Technical Decisions
-
-### Security Implementation
-
-- **Argon2 password encoding** with BouncyCastle dependency
-- **Basic authentication** via username/password in form data
-- **CORS enabled** for development with `@CrossOrigin(origins = "*")`
-- Security temporarily permissive (`permitAll()`) - authentication handled in use cases
-
-### Testing Patterns
-
-- **Unit tests**: `@ExtendWith(MockitoExtension.class)` with `@Mock` repositories
-- **Integration tests**: Testcontainers for MongoDB (see dependencies)
-- **Domain tests**: Direct entity testing with helper methods like `createTestActivity()`
-- Test naming: `shouldDoSomethingWhenCondition()` format
-
-### Frontend Integration
-
-- **Static resources**: Served from `src/main/resources/static/`
-- **API endpoints**: REST controllers under `/activities` and `/auth`
-- **Form-based auth**: Uses `application/x-www-form-urlencoded` with `teacher_username` parameter
-- **Response format**: JSON with consistent error structure
-
-## Data Seeding & Environment
-
-The system auto-seeds via Mongock with:
-
-- **Teachers**: `mrodriguez`, `mchen`, `principal` (usernames)
-- **Activities**: Chess Club, Programming Class, Art Club, etc.
-- **Schedule format**: Uses `ScheduleDetails` value object with days list and `LocalTime`
-
-Default passwords configurable via environment variables, fallback to secure defaults in code.
-
-## Common Implementation Pitfalls
-
-1. **Layer violations**: Never import infrastructure classes in domain layer
-2. **Entity persistence**: Domain entities use Spring Data MongoDB annotations but remain persistence-agnostic
-3. **Authentication flow**: Always validate teacher credentials in use cases, not security config
-4. **Time handling**: Use `LocalTime` for schedules, store as `ScheduleDetails` value object
-5. **Error consistency**: Use domain exceptions, translate to HTTP responses in controllers
-
-When extending this system, follow the established patterns: create use cases for business logic, implement repository interfaces for data access, and maintain the clean dependency flow.
+- **NEVER CANCEL** any build or test commands - builds may take up to 45 minutes on first run
+- **ALWAYS** set timeouts of 60+ minutes for build commands and 30+ minutes for test commands
+- **ALWAYS** start MongoDB before running application
+- **ALWAYS** use `dev` profile for development (`SPRING_PROFILES_ACTIVE=dev`)
+- **ALWAYS** validate functionality with complete user scenarios after changes
