@@ -11,6 +11,7 @@ import com.mergingtonhigh.schoolmanagement.application.dtos.ActivityDTO;
 import com.mergingtonhigh.schoolmanagement.application.services.ActivitySyncService;
 import com.mergingtonhigh.schoolmanagement.domain.entities.Activity;
 import com.mergingtonhigh.schoolmanagement.domain.repositories.ActivityRepository;
+import com.mergingtonhigh.schoolmanagement.domain.valueobjects.DifficultyLevel;
 import com.mergingtonhigh.schoolmanagement.application.mappers.ActivityMapper;
 
 @Service
@@ -28,6 +29,10 @@ public class ActivityUseCase {
     }
 
     public Map<String, ActivityDTO> getActivities(String day, String startTime, String endTime, String category) {
+        return getActivities(day, startTime, endTime, category, null);
+    }
+
+    public Map<String, ActivityDTO> getActivities(String day, String startTime, String endTime, String category, String difficulty) {
         List<Activity> activities;
 
         if (day != null && startTime != null && endTime != null) {
@@ -55,10 +60,30 @@ public class ActivityUseCase {
                 .map(activityMapper::toDTO)
                 .collect(Collectors.toMap(ActivityDTO::name, dto -> dto));
 
+        // Filtrar por categoria se especificada
         if (category != null && !category.trim().isEmpty()) {
-            return activityMap.entrySet().stream()
+            activityMap = activityMap.entrySet().stream()
                     .filter(entry -> category.equals(entry.getValue().category()))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        }
+
+        // Filtrar por dificuldade se especificada
+        if (difficulty != null && !difficulty.trim().isEmpty()) {
+            if ("todos".equalsIgnoreCase(difficulty.trim())) {
+                // Mostrar apenas atividades sem dificuldade especificada (para todos os níveis)
+                activityMap = activityMap.entrySet().stream()
+                        .filter(entry -> entry.getValue().difficultyLevel() == null)
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            } else {
+                // Mostrar atividades do nível específico
+                DifficultyLevel difficultyLevel = DifficultyLevel.fromString(difficulty);
+                if (difficultyLevel != null) {
+                    String targetDifficulty = difficultyLevel.getDisplayName();
+                    activityMap = activityMap.entrySet().stream()
+                            .filter(entry -> targetDifficulty.equals(entry.getValue().difficultyLevel()))
+                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                }
+            }
         }
 
         return activityMap;

@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.mergingtonhigh.schoolmanagement.domain.valueobjects.DifficultyLevel;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.Email;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.ScheduleDetails;
 
@@ -168,5 +169,58 @@ class ActivityTest {
                 schedule,
                 12,
                 "academic");
+    }
+
+    @Test
+    void shouldCreateActivityWithDifficultyLevel() {
+        ScheduleDetails schedule = new ScheduleDetails(
+                List.of("Monday"),
+                LocalTime.of(15, 30),
+                LocalTime.of(17, 0));
+
+        Activity activity = new Activity(
+                "Clube de Xadrez Avançado",
+                "Xadrez para jogadores experientes",
+                schedule,
+                8,
+                "academic",
+                DifficultyLevel.AVANCADO);
+
+        assertEquals("Clube de Xadrez Avançado", activity.getName());
+        assertEquals(DifficultyLevel.AVANCADO, activity.getDifficultyLevel());
+        assertFalse(activity.isForAllLevels());
+    }
+
+    @Test
+    void shouldCreateActivityWithoutDifficultyLevel() {
+        ScheduleDetails schedule = new ScheduleDetails(
+                List.of("Monday"),
+                LocalTime.of(15, 30),
+                LocalTime.of(17, 0));
+
+        Activity activity = new Activity(
+                "Clube de Xadrez",
+                "Xadrez para todos os níveis",
+                schedule,
+                12,
+                "academic");
+
+        assertEquals("Clube de Xadrez", activity.getName());
+        assertEquals(null, activity.getDifficultyLevel());
+        assertTrue(activity.isForAllLevels());
+    }
+
+    @Test
+    void shouldSetAndGetDifficultyLevel() {
+        Activity activity = createTestActivity();
+        
+        assertTrue(activity.isForAllLevels());
+        
+        activity.setDifficultyLevel(DifficultyLevel.INTERMEDIARIO);
+        assertEquals(DifficultyLevel.INTERMEDIARIO, activity.getDifficultyLevel());
+        assertFalse(activity.isForAllLevels());
+        
+        activity.setDifficultyLevel(null);
+        assertTrue(activity.isForAllLevels());
     }
 }

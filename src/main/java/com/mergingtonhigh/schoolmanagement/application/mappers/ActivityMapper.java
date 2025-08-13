@@ -70,6 +70,7 @@ public class ActivityMapper {
                 categoryCode,
                 categoryDetails,
                 assignedTeachers,
-                teacherDetails);
+                teacherDetails,
+                activity.getDifficultyLevel() != null ? activity.getDifficultyLevel().getDisplayName() : null);
     }
 }

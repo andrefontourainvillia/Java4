@@ -34,9 +34,10 @@ public class ActivityController {
             @RequestParam(required = false) String day,
             @RequestParam(name = "start_time", required = false) String startTime,
             @RequestParam(name = "end_time", required = false) String endTime,
-            @RequestParam(required = false) String category) {
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String difficulty) {
 
-        Map<String, ActivityDTO> activities = activityUseCase.getActivities(day, startTime, endTime, category);
+        Map<String, ActivityDTO> activities = activityUseCase.getActivities(day, startTime, endTime, category, difficulty);
         return ResponseEntity.ok(activities);
     }
 
