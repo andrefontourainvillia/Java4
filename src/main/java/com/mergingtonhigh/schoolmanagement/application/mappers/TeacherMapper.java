@@ -1,4 +1,4 @@
-package com.mergingtonhigh.schoolmanagement.presentation.mappers;
+package com.mergingtonhigh.schoolmanagement.application.mappers;
 
 import com.mergingtonhigh.schoolmanagement.application.dtos.TeacherDTO;
 import com.mergingtonhigh.schoolmanagement.domain.entities.Teacher;
