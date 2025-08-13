@@ -10,6 +10,18 @@
     <header>
       <h1>Colégio Mergington</h1>
       <h2>Atividades Extracurriculares</h2>
+      <div id="view-controls">
+        <div class="view-toggle">
+          <button id="card-view-btn" class="view-toggle-btn active">
+            <span class="view-icon">⊞</span>
+            <span>Cartões</span>
+          </button>
+          <button id="calendar-view-btn" class="view-toggle-btn">
+            <span class="view-icon">📅</span>
+            <span>Calendário</span>
+          </button>
+        </div>
+      </div>
       <div id="user-controls">
         <div id="user-status">
           <button id="login-button" class="icon-button">
@@ -92,6 +104,9 @@
             <div id="activities-list">
               <!-- Activities will be loaded here -->
               <p>Carregando atividades...</p>
+            </div>
+            <div id="calendar-view" class="hidden">
+              <!-- Calendar view will be rendered here -->
             </div>
             <div id="message" class="hidden message"></div>
           </div>
