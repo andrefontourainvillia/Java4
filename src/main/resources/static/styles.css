@@ -32,6 +32,40 @@
   --info-light: #d1ecf1;
 }
 
+/* Dark mode color palette */
+body.dark-mode {
+  /* Primary colors for dark mode */
+  --primary: #7986cb;
+  --primary-light: #aab6fe;
+  --primary-dark: #49599a;
+  --primary-text: #ffffff;
+
+  /* Secondary colors for dark mode */
+  --secondary: #ff9800;
+  --secondary-light: #ffc947;
+  --secondary-dark: #c66900;
+  --secondary-text: #000000;
+
+  /* Neutral colors for dark mode */
+  --background: #121212;
+  --surface: #1e1e1e;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b3b3b3;
+  --border: #404040;
+  --border-light: #2a2a2a;
+  --border-focus: #606060;
+
+  /* Feedback colors for dark mode */
+  --success: #4caf50;
+  --success-light: #2e2e2e;
+  --warning: #ff9800;
+  --warning-light: #2a2a2a;
+  --error: #f44336;
+  --error-light: #2e2e2e;
+  --info: #2196f3;
+  --info-light: #2a2a2a;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -712,4 +746,44 @@ footer {
 
 #logout-button:hover {
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Theme toggle button styles */
+#theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.85rem;
+  color: var(--primary-text);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-right: 10px;
+}
+
+#theme-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.theme-icon {
+  font-size: 1rem;
+}
+
+/* Improve contrast in dark mode */
+body.dark-mode .activity-tag {
+  background-color: var(--primary);
+  color: var(--primary-text);
+}
+
+body.dark-mode .modal-content {
+  background-color: var(--surface);
+  border-color: var(--border);
+}
+
+body.dark-mode .tooltip .tooltip-text {
+  background-color: rgba(224, 224, 224, 0.9);
+  color: #121212;
 }

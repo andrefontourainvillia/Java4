@@ -8,6 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const activityInput = document.getElementById("activity");
   const closeRegistrationModal = document.querySelector(".close-modal");
 
+  // Theme toggle elements
+  const themeToggle = document.getElementById("theme-toggle");
+  const themeIcon = document.querySelector(".theme-icon");
+  const themeText = themeToggle.querySelector("span:last-child");
+
   // Search and filter elements
   const searchInput = document.getElementById("activity-search");
   const searchButton = document.getElementById("search-button");
@@ -35,6 +40,54 @@ document.addEventListener("DOMContentLoaded", () => {
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
+
+  // Theme management
+  let isDarkMode = false;
+
+  // Initialize theme from localStorage or system preference
+  function initializeTheme() {
+    const savedTheme = localStorage.getItem("darkMode");
+    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    
+    // Use saved preference if available, otherwise use system preference
+    isDarkMode = savedTheme ? savedTheme === "true" : systemPrefersDark;
+    
+    applyTheme();
+    updateThemeToggleUI();
+  }
+
+  // Apply the current theme
+  function applyTheme() {
+    if (isDarkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
+    }
+  }
+
+  // Update the theme toggle button UI
+  function updateThemeToggleUI() {
+    if (isDarkMode) {
+      themeIcon.textContent = "☀️";
+      themeText.textContent = "Claro";
+    } else {
+      themeIcon.textContent = "🌙";
+      themeText.textContent = "Escuro";
+    }
+  }
+
+  // Toggle theme function
+  function toggleTheme() {
+    isDarkMode = !isDarkMode;
+    applyTheme();
+    updateThemeToggleUI();
+    
+    // Save preference to localStorage
+    localStorage.setItem("darkMode", isDarkMode.toString());
+  }
+
+  // Event listener for theme toggle
+  themeToggle.addEventListener("click", toggleTheme);
 
   // Load activity categories from backend
   async function loadActivityCategories() {
@@ -1025,6 +1078,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize app with backend categories
   async function initializeApp() {
     try {
+      // Initialize theme first
+      initializeTheme();
+      
       // Load categories from backend first
       await loadActivityCategories();
       
