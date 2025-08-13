@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.mergingtonhigh.schoolmanagement.application.dtos.TeacherDTO;
-import com.mergingtonhigh.schoolmanagement.application.services.ActivitySyncService;
 import com.mergingtonhigh.schoolmanagement.domain.entities.Teacher;
 import com.mergingtonhigh.schoolmanagement.domain.repositories.TeacherRepository;
 import com.mergingtonhigh.schoolmanagement.application.mappers.TeacherMapper;
@@ -17,14 +16,11 @@ public class TeacherUseCase {
 
     private final TeacherRepository teacherRepository;
     private final TeacherMapper teacherMapper;
-    private final ActivitySyncService activitySyncService;
 
     public TeacherUseCase(TeacherRepository teacherRepository,
-            TeacherMapper teacherMapper,
-            ActivitySyncService activitySyncService) {
+            TeacherMapper teacherMapper) {
         this.teacherRepository = teacherRepository;
         this.teacherMapper = teacherMapper;
-        this.activitySyncService = activitySyncService;
     }
 
     public List<TeacherDTO> getAllTeachers() {
@@ -66,10 +62,6 @@ public class TeacherUseCase {
 
         Teacher savedTeacher = teacherRepository.save(teacher);
 
-        // Sincroniza dados embarcados em todas as atividades onde o professor está
-        // atribuído
-        activitySyncService.syncTeacherDataInActivities(savedTeacher);
-
         return teacherMapper.toDTO(savedTeacher);
     }
 
@@ -81,9 +73,6 @@ public class TeacherUseCase {
         if (!teacherRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("Professor não encontrado: " + username);
         }
-
-        // Remove todas as referências embarcadas do professor das atividades
-        activitySyncService.removeTeacherFromActivities(username);
 
         teacherRepository.deleteByUsername(username);
     }

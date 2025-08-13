@@ -63,11 +63,6 @@ public class ActivityRepositoryImpl implements ActivityRepository {
     }
 
     @Override
-    public List<Activity> findByCategoryId(String categoryId) {
-        return mongoRepository.findByCategoryId(categoryId);
-    }
-
-    @Override
     public Activity save(Activity activity) {
         return mongoRepository.save(activity);
     }

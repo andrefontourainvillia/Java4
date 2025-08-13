@@ -6,10 +6,9 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.mergingtonhigh.schoolmanagement.domain.valueobjects.CategoryReference;
+import com.mergingtonhigh.schoolmanagement.domain.enums.ActivityCategory;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.Email;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.ScheduleDetails;
-import com.mergingtonhigh.schoolmanagement.domain.valueobjects.TeacherReference;
 
 @Document(collection = "activities")
 public class Activity {
@@ -20,41 +19,23 @@ public class Activity {
     private ScheduleDetails scheduleDetails;
     private int maxParticipants;
     private List<String> participantEmails;
-    private List<TeacherReference> assignedTeachers;
-    private CategoryReference category;
-    private String categoryId;
-    private List<String> assignedTeacherUsernames;
+    private ActivityCategory category;
+    private boolean canTeachersRegisterStudents;
 
     public Activity() {
         this.participantEmails = new ArrayList<>();
-        this.assignedTeachers = new ArrayList<>();
-        this.assignedTeacherUsernames = new ArrayList<>();
+        this.canTeachersRegisterStudents = true;
     }
 
     public Activity(String name, String description, ScheduleDetails scheduleDetails,
-            int maxParticipants, String categoryId) {
-        this.name = validateName(name);
-        this.description = validateDescription(description);
-        this.scheduleDetails = scheduleDetails;
-        this.maxParticipants = validateMaxParticipants(maxParticipants);
-        this.categoryId = categoryId;
-        this.participantEmails = new ArrayList<>();
-        this.assignedTeachers = new ArrayList<>();
-        this.assignedTeacherUsernames = new ArrayList<>();
-    }
-
-    // Construtor adicional para incluir dados embarcados completos
-    public Activity(String name, String description, ScheduleDetails scheduleDetails,
-            int maxParticipants, CategoryReference category) {
+            int maxParticipants, ActivityCategory category) {
         this.name = validateName(name);
         this.description = validateDescription(description);
         this.scheduleDetails = scheduleDetails;
         this.maxParticipants = validateMaxParticipants(maxParticipants);
         this.category = category;
-        this.categoryId = category != null ? category.getId() : null;
         this.participantEmails = new ArrayList<>();
-        this.assignedTeachers = new ArrayList<>();
-        this.assignedTeacherUsernames = new ArrayList<>();
+        this.canTeachersRegisterStudents = true;
     }
 
     public boolean canAddParticipant() {
@@ -80,38 +61,6 @@ public class Activity {
             throw new IllegalArgumentException("Estudante não está inscrito nesta atividade");
         }
         participantEmails.remove(email.value());
-    }
-
-    public boolean isTeacherAssigned(String teacherUsername) {
-        return assignedTeacherUsernames.contains(teacherUsername);
-    }
-
-    public void assignTeacher(String teacherUsername) {
-        if (teacherUsername == null || teacherUsername.trim().isEmpty()) {
-            throw new IllegalArgumentException("Nome de usuário do professor não pode ser nulo ou vazio");
-        }
-        if (!isTeacherAssigned(teacherUsername)) {
-            assignedTeacherUsernames.add(teacherUsername.trim());
-        }
-    }
-
-    // Método para atribuir professor com dados completos embarcados
-    public void assignTeacher(TeacherReference teacher) {
-        if (teacher == null) {
-            throw new IllegalArgumentException("Professor não pode ser nulo");
-        }
-
-        String username = teacher.getUsername();
-        if (!isTeacherAssigned(username)) {
-            assignedTeacherUsernames.add(username);
-            assignedTeachers.removeIf(t -> t.getUsername().equals(username)); // Remove se já existir
-            assignedTeachers.add(teacher);
-        }
-    }
-
-    public void removeTeacher(String teacherUsername) {
-        assignedTeacherUsernames.remove(teacherUsername);
-        assignedTeachers.removeIf(t -> t.getUsername().equals(teacherUsername));
     }
 
     private String validateName(String name) {
@@ -179,46 +128,20 @@ public class Activity {
         return participantEmails.size();
     }
 
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public List<String> getAssignedTeachers() {
-        return new ArrayList<>(assignedTeacherUsernames);
-    }
-
-    public void setAssignedTeachers(List<String> assignedTeachers) {
-        this.assignedTeacherUsernames = assignedTeachers != null ? new ArrayList<>(assignedTeachers)
-                : new ArrayList<>();
-    }
-
-    // Novos métodos para trabalhar com dados embarcados
-    public List<TeacherReference> getAssignedTeacherReferences() {
-        return new ArrayList<>(assignedTeachers);
-    }
-
-    public void setAssignedTeacherReferences(List<TeacherReference> assignedTeachers) {
-        this.assignedTeachers = assignedTeachers != null ? new ArrayList<>(assignedTeachers) : new ArrayList<>();
-        this.assignedTeacherUsernames = this.assignedTeachers.stream()
-                .map(TeacherReference::getUsername)
-                .collect(java.util.stream.Collectors.toList());
-    }
-
-    public CategoryReference getCategory() {
+    public ActivityCategory getCategory() {
         return category;
     }
 
-    public void setCategory(CategoryReference category) {
+    public void setCategory(ActivityCategory category) {
         this.category = category;
-        this.categoryId = category != null ? category.getId() : null;
     }
 
-    public List<String> getAssignedTeacherUsernames() {
-        return new ArrayList<>(assignedTeacherUsernames);
+    public boolean canTeachersRegisterStudents() {
+        return canTeachersRegisterStudents;
+    }
+
+    public void setCanTeachersRegisterStudents(boolean canTeachersRegisterStudents) {
+        this.canTeachersRegisterStudents = canTeachersRegisterStudents;
     }
 
     public int getRemainingSpots() {
@@ -242,6 +165,6 @@ public class Activity {
                 name,
                 participantEmails.size(),
                 maxParticipants,
-                categoryId);
+                category != null ? category.getDisplayName() : "N/A");
     }
 }

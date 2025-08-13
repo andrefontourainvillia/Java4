@@ -21,6 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.mergingtonhigh.schoolmanagement.domain.entities.Activity;
 import com.mergingtonhigh.schoolmanagement.domain.entities.Teacher;
+import com.mergingtonhigh.schoolmanagement.domain.enums.ActivityCategory;
 import com.mergingtonhigh.schoolmanagement.domain.exceptions.AuthenticationException;
 import com.mergingtonhigh.schoolmanagement.domain.exceptions.AuthorizationException;
 import com.mergingtonhigh.schoolmanagement.domain.exceptions.NotFoundException;
@@ -52,7 +53,7 @@ class StudentRegistrationUseCaseTest {
 
         Teacher teacher = new Teacher(teacherUsername, "Teacher", "password", Teacher.Role.TEACHER);
         Activity activity = createTestActivity(activityName);
-        activity.assignTeacher(teacherUsername);
+        activity.setCanTeachersRegisterStudents(true); // Allow teachers to register students
 
         when(teacherRepository.findByUsername(teacherUsername)).thenReturn(Optional.of(teacher));
         when(activityRepository.findByName(activityName)).thenReturn(Optional.of(activity));
@@ -105,7 +106,7 @@ class StudentRegistrationUseCaseTest {
 
         Teacher teacher = new Teacher(teacherUsername, "Teacher", "password", Teacher.Role.TEACHER);
         Activity activity = createTestActivity(activityName);
-        activity.assignTeacher(teacherUsername);
+        activity.setCanTeachersRegisterStudents(true); // Allow teachers to register students
         activity.setParticipants(List.of(email));
 
         when(teacherRepository.findByUsername(teacherUsername)).thenReturn(Optional.of(teacher));
@@ -127,6 +128,7 @@ class StudentRegistrationUseCaseTest {
 
         Teacher teacher = new Teacher(teacherUsername, "Unauthorized Teacher", "password", Teacher.Role.TEACHER);
         Activity activity = createTestActivity(activityName);
+        activity.setCanTeachersRegisterStudents(false); // Don't allow teachers to register students
 
         when(teacherRepository.findByUsername(teacherUsername)).thenReturn(Optional.of(teacher));
         when(activityRepository.findByName(activityName)).thenReturn(Optional.of(activity));
@@ -135,7 +137,7 @@ class StudentRegistrationUseCaseTest {
                 () -> useCase.signupForActivity(activityName, email, teacherUsername));
 
         assertEquals(
-                "Professor não autorizado a modificar esta atividade. Apenas professores vinculados à atividade podem fazer alterações.",
+                "Professores não podem registrar estudantes nesta atividade. Apenas administradores podem fazer alterações.",
                 exception.getMessage());
         verify(activityRepository, never()).save(any());
     }
@@ -171,6 +173,6 @@ class StudentRegistrationUseCaseTest {
                 "Test Description",
                 schedule,
                 12,
-                "academic");
+                ActivityCategory.ACADEMIC);
     }
 }

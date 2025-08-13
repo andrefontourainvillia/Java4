@@ -84,10 +84,10 @@ public class StudentRegistrationUseCase {
             return;
         }
 
-        if (!activity.isTeacherAssigned(teacher.getUsername())) {
-            logger.warn("Teacher {} not authorized for activity {}", teacher.getUsername(), activity.getName());
+        if (!activity.canTeachersRegisterStudents()) {
+            logger.warn("Teacher {} not authorized for activity {} - teachers cannot register students", teacher.getUsername(), activity.getName());
             throw new AuthorizationException(
-                    "Professor não autorizado a modificar esta atividade. Apenas professores vinculados à atividade podem fazer alterações.");
+                    "Professores não podem registrar estudantes nesta atividade. Apenas administradores podem fazer alterações.");
         }
         
         logger.debug("Teacher {} authorized for activity {}", teacher.getUsername(), activity.getName());

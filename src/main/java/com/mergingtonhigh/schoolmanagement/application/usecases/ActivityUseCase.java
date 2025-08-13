@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.mergingtonhigh.schoolmanagement.application.dtos.ActivityDTO;
-import com.mergingtonhigh.schoolmanagement.application.services.ActivitySyncService;
 import com.mergingtonhigh.schoolmanagement.domain.entities.Activity;
 import com.mergingtonhigh.schoolmanagement.domain.repositories.ActivityRepository;
 import com.mergingtonhigh.schoolmanagement.application.mappers.ActivityMapper;
@@ -18,13 +17,10 @@ public class ActivityUseCase {
 
     private final ActivityRepository activityRepository;
     private final ActivityMapper activityMapper;
-    private final ActivitySyncService activitySyncService;
 
-    public ActivityUseCase(ActivityRepository activityRepository, ActivityMapper activityMapper,
-            ActivitySyncService activitySyncService) {
+    public ActivityUseCase(ActivityRepository activityRepository, ActivityMapper activityMapper) {
         this.activityRepository = activityRepository;
         this.activityMapper = activityMapper;
-        this.activitySyncService = activitySyncService;
     }
 
     public Map<String, ActivityDTO> getActivities(String day, String startTime, String endTime, String category) {
@@ -44,32 +40,17 @@ public class ActivityUseCase {
             activities = activityRepository.findAll();
         }
 
-        // Garante que dados embarcados estão sincronizados
-        activities.forEach(activity -> {
-            if (needsSync(activity)) {
-                activitySyncService.syncActivityEmbeddedData(activity.getName());
-            }
-        });
-
         Map<String, ActivityDTO> activityMap = activities.stream()
                 .map(activityMapper::toDTO)
                 .collect(Collectors.toMap(ActivityDTO::name, dto -> dto));
 
         if (category != null && !category.trim().isEmpty()) {
             return activityMap.entrySet().stream()
-                    .filter(entry -> category.equals(entry.getValue().category()))
+                    .filter(entry -> category.equals(entry.getValue().category().name()))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         }
 
         return activityMap;
-    }
-
-    private boolean needsSync(Activity activity) {
-        // Verifica se dados embarcados estão vazios mas existem referências
-        boolean needsCategorySync = activity.getCategoryId() != null && activity.getCategory() == null;
-        boolean needsTeacherSync = !activity.getAssignedTeachers().isEmpty() &&
-                activity.getAssignedTeacherReferences().isEmpty();
-        return needsCategorySync || needsTeacherSync;
     }
 
     public Map<String, ActivityDTO> getActivities(String day, String startTime, String endTime) {
