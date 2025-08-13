@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mergingtonhigh.schoolmanagement.application.dtos.ActivityDTO;
 import com.mergingtonhigh.schoolmanagement.application.usecases.ActivityUseCase;
 import com.mergingtonhigh.schoolmanagement.application.usecases.StudentRegistrationUseCase;
+import com.mergingtonhigh.schoolmanagement.domain.exceptions.AuthenticationException;
 
 @RestController
 @RequestMapping("/activities")
@@ -52,24 +53,11 @@ public class ActivityController {
             @RequestParam(name = "teacher_username", required = false) String teacherUsername) {
 
         if (teacherUsername == null || teacherUsername.trim().isEmpty()) {
-            return ResponseEntity.status(401)
-                    .body(Map.of("detail", "Autenticação necessária para esta ação"));
+            throw new AuthenticationException("Autenticação necessária para esta ação");
         }
 
-        try {
-            String message = studentRegistrationUseCase.signupForActivity(activityName, email, teacherUsername);
-            return ResponseEntity.ok(Map.of("message", message));
-        } catch (IllegalArgumentException e) {
-            if (e.getMessage().contains("credentials")) {
-                return ResponseEntity.status(401).body(Map.of("detail", e.getMessage()));
-            } else if (e.getMessage().contains("not found")) {
-                return ResponseEntity.status(404).body(Map.of("detail", e.getMessage()));
-            } else {
-                return ResponseEntity.status(400).body(Map.of("detail", e.getMessage()));
-            }
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(400).body(Map.of("detail", e.getMessage()));
-        }
+        String message = studentRegistrationUseCase.signupForActivity(activityName, email, teacherUsername);
+        return ResponseEntity.ok(Map.of("message", message));
     }
 
     @PostMapping("/{activityName}/unregister")
@@ -79,21 +67,10 @@ public class ActivityController {
             @RequestParam(name = "teacher_username", required = false) String teacherUsername) {
 
         if (teacherUsername == null || teacherUsername.trim().isEmpty()) {
-            return ResponseEntity.status(401)
-                    .body(Map.of("detail", "Autenticação necessária para esta ação"));
+            throw new AuthenticationException("Autenticação necessária para esta ação");
         }
 
-        try {
-            String message = studentRegistrationUseCase.unregisterFromActivity(activityName, email, teacherUsername);
-            return ResponseEntity.ok(Map.of("message", message));
-        } catch (IllegalArgumentException e) {
-            if (e.getMessage().contains("credentials")) {
-                return ResponseEntity.status(401).body(Map.of("detail", e.getMessage()));
-            } else if (e.getMessage().contains("not found")) {
-                return ResponseEntity.status(404).body(Map.of("detail", e.getMessage()));
-            } else {
-                return ResponseEntity.status(400).body(Map.of("detail", e.getMessage()));
-            }
-        }
+        String message = studentRegistrationUseCase.unregisterFromActivity(activityName, email, teacherUsername);
+        return ResponseEntity.ok(Map.of("message", message));
     }
 }

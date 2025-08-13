@@ -1,15 +1,22 @@
 package com.mergingtonhigh.schoolmanagement.application.usecases;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.mergingtonhigh.schoolmanagement.domain.entities.Activity;
 import com.mergingtonhigh.schoolmanagement.domain.entities.Teacher;
+import com.mergingtonhigh.schoolmanagement.domain.exceptions.AuthenticationException;
+import com.mergingtonhigh.schoolmanagement.domain.exceptions.AuthorizationException;
+import com.mergingtonhigh.schoolmanagement.domain.exceptions.NotFoundException;
 import com.mergingtonhigh.schoolmanagement.domain.repositories.ActivityRepository;
 import com.mergingtonhigh.schoolmanagement.domain.repositories.TeacherRepository;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.Email;
 
 @Service
 public class StudentRegistrationUseCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(StudentRegistrationUseCase.class);
 
     private final ActivityRepository activityRepository;
     private final TeacherRepository teacherRepository;
@@ -20,11 +27,19 @@ public class StudentRegistrationUseCase {
     }
 
     public String signupForActivity(String activityName, String email, String teacherUsername) {
+        logger.debug("Attempting to signup {} for activity {} by teacher {}", email, activityName, teacherUsername);
+        
         Teacher teacher = teacherRepository.findByUsername(teacherUsername)
-                .orElseThrow(() -> new IllegalArgumentException("Credenciais de professor inválidas"));
+                .orElseThrow(() -> {
+                    logger.warn("Invalid teacher credentials for signup: {}", teacherUsername);
+                    return new AuthenticationException("Credenciais de professor inválidas");
+                });
 
         Activity activity = activityRepository.findByName(activityName)
-                .orElseThrow(() -> new IllegalArgumentException("Atividade não encontrada"));
+                .orElseThrow(() -> {
+                    logger.warn("Activity not found for signup: {}", activityName);
+                    return new NotFoundException("Atividade não encontrada");
+                });
 
         validateTeacherAuthorization(teacher, activity);
 
@@ -33,15 +48,24 @@ public class StudentRegistrationUseCase {
 
         activityRepository.save(activity);
 
+        logger.info("Successfully signed up {} for activity {} by teacher {}", email, activityName, teacherUsername);
         return String.format("Inscreveu %s em %s", email, activityName);
     }
 
     public String unregisterFromActivity(String activityName, String email, String teacherUsername) {
+        logger.debug("Attempting to unregister {} from activity {} by teacher {}", email, activityName, teacherUsername);
+        
         Teacher teacher = teacherRepository.findByUsername(teacherUsername)
-                .orElseThrow(() -> new IllegalArgumentException("Credenciais de professor inválidas"));
+                .orElseThrow(() -> {
+                    logger.warn("Invalid teacher credentials for unregistration: {}", teacherUsername);
+                    return new AuthenticationException("Credenciais de professor inválidas");
+                });
 
         Activity activity = activityRepository.findByName(activityName)
-                .orElseThrow(() -> new IllegalArgumentException("Atividade não encontrada"));
+                .orElseThrow(() -> {
+                    logger.warn("Activity not found for unregistration: {}", activityName);
+                    return new NotFoundException("Atividade não encontrada");
+                });
 
         validateTeacherAuthorization(teacher, activity);
 
@@ -50,17 +74,22 @@ public class StudentRegistrationUseCase {
 
         activityRepository.save(activity);
 
+        logger.info("Successfully unregistered {} from activity {} by teacher {}", email, activityName, teacherUsername);
         return String.format("Desinscreveu %s de %s", email, activityName);
     }
 
     private void validateTeacherAuthorization(Teacher teacher, Activity activity) {
         if (teacher.isAdmin()) {
+            logger.debug("Admin teacher {} authorized for activity {}", teacher.getUsername(), activity.getName());
             return;
         }
 
         if (!activity.isTeacherAssigned(teacher.getUsername())) {
-            throw new IllegalArgumentException(
+            logger.warn("Teacher {} not authorized for activity {}", teacher.getUsername(), activity.getName());
+            throw new AuthorizationException(
                     "Professor não autorizado a modificar esta atividade. Apenas professores vinculados à atividade podem fazer alterações.");
         }
+        
+        logger.debug("Teacher {} authorized for activity {}", teacher.getUsername(), activity.getName());
     }
 }

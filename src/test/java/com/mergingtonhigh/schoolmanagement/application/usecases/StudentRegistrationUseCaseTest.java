@@ -21,6 +21,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.mergingtonhigh.schoolmanagement.domain.entities.Activity;
 import com.mergingtonhigh.schoolmanagement.domain.entities.Teacher;
+import com.mergingtonhigh.schoolmanagement.domain.exceptions.AuthenticationException;
+import com.mergingtonhigh.schoolmanagement.domain.exceptions.AuthorizationException;
+import com.mergingtonhigh.schoolmanagement.domain.exceptions.NotFoundException;
 import com.mergingtonhigh.schoolmanagement.domain.repositories.ActivityRepository;
 import com.mergingtonhigh.schoolmanagement.domain.repositories.TeacherRepository;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.ScheduleDetails;
@@ -70,7 +73,7 @@ class StudentRegistrationUseCaseTest {
 
         when(teacherRepository.findByUsername(teacherUsername)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(AuthenticationException.class,
                 () -> useCase.signupForActivity(activityName, email, teacherUsername));
 
         verify(activityRepository, never()).findByName(any());
@@ -88,7 +91,7 @@ class StudentRegistrationUseCaseTest {
         when(teacherRepository.findByUsername(teacherUsername)).thenReturn(Optional.of(teacher));
         when(activityRepository.findByName(activityName)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(NotFoundException.class,
                 () -> useCase.signupForActivity(activityName, email, teacherUsername));
 
         verify(activityRepository, never()).save(any());
@@ -128,7 +131,7 @@ class StudentRegistrationUseCaseTest {
         when(teacherRepository.findByUsername(teacherUsername)).thenReturn(Optional.of(teacher));
         when(activityRepository.findByName(activityName)).thenReturn(Optional.of(activity));
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        AuthorizationException exception = assertThrows(AuthorizationException.class,
                 () -> useCase.signupForActivity(activityName, email, teacherUsername));
 
         assertEquals(

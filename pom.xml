@@ -66,6 +66,12 @@
             <version>1.78.1</version>
         </dependency>
         
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        
         <!-- Development and Configuration -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -143,7 +149,7 @@
                 <version>3.5.3</version>
                 <configuration>
                     <jvm>${java.home}/bin/java</jvm>
-                    <argLine>-Djava.version=21</argLine>
+                    <argLine>@{argLine} -Djava.version=21</argLine>
                 </configuration>
             </plugin>
             

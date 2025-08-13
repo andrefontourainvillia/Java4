@@ -1,7 +1,5 @@
 package com.mergingtonhigh.schoolmanagement.presentation.controllers;
 
-import java.util.Map;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,24 +21,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {
-        try {
-            TeacherDTO teacher = authenticationUseCase.login(username, password);
-            return ResponseEntity.ok(teacher);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(401)
-                    .body(Map.of("detail", "Usuário ou senha inválidos"));
-        }
+    public ResponseEntity<TeacherDTO> login(@RequestParam String username, @RequestParam String password) {
+        TeacherDTO teacher = authenticationUseCase.login(username, password);
+        return ResponseEntity.ok(teacher);
     }
 
     @GetMapping("/check-session")
-    public ResponseEntity<?> checkSession(@RequestParam String username) {
-        try {
-            TeacherDTO teacher = authenticationUseCase.checkSession(username);
-            return ResponseEntity.ok(teacher);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(404)
-                    .body(Map.of("detail", "Professor não encontrado"));
-        }
+    public ResponseEntity<TeacherDTO> checkSession(@RequestParam String username) {
+        TeacherDTO teacher = authenticationUseCase.checkSession(username);
+        return ResponseEntity.ok(teacher);
     }
 }
