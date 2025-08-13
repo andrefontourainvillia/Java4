@@ -1,10 +1,10 @@
-# Sistema de Gestão Escolar - Mergington High School
+# Sistema de Gestão Escolar - Colégio Mergington
 
 Sistema de gestão de atividades extracurriculares desenvolvido com Spring Boot e arquitetura limpa (Clean Architecture).
 
 ## 📋 Visão Geral
 
-O **School Management System** é uma aplicação web que permite o gerenciamento de atividades extracurriculares da Mergington High School. O sistema possibilita que professores administrem atividades e que estudantes se inscrevam nelas através de uma interface web intuitiva.
+O **Sistema de Gestão Escolar** é uma aplicação web que permite o gerenciamento de atividades extracurriculares do Colégio Mergington. O sistema possibilita que professores administrem atividades e que estudantes se inscrevam nelas através de uma interface web intuitiva.
 
 ## 🏗️ Arquitetura
 
@@ -66,6 +66,7 @@ src/main/java/com/mergingtonhigh/schoolmanagement/
 - **Spring Validation** - Validação de dados
 - **Mongock 5.5.1** - Migrações do banco de dados
 - **BouncyCastle** - Criptografia para senhas
+- **OpenAPI 3** - Documentação da API REST
 
 ### Frontend
 
@@ -83,6 +84,7 @@ src/main/java/com/mergingtonhigh/schoolmanagement/
 - **Mockito** - Mocks para testes
 - **Testcontainers** - Testes de integração
 - **Jacoco** - Cobertura de testes
+- **ArchUnit** - Testes de arquitetura
 
 ## 📦 Funcionalidades Principais
 
@@ -113,12 +115,17 @@ src/main/java/com/mergingtonhigh/schoolmanagement/
   - Duplicatas
   - Autenticação do professor
 
+- **Feedback visual** para ações do usuário
+
 ### 🎨 Interface Web
 
 - **Design responsivo** e intuitivo
-- **Filtros dinâmicos** para busca de atividades
+- **Filtros dinâmicos** para busca de atividades por:
+  - Nome da atividade
+  - Categoria (Esportes, Artes, Acadêmico, Tecnologia, Comunidade)
+  - Dia da semana
+  - Horário (manhã, tarde, fim de semana)
 - **Modais** para login e inscrições
-- **Feedback visual** para ações do usuário
 
 ## 🔧 Configuração e Execução
 
@@ -160,6 +167,7 @@ Crie um arquivo `.env` baseado no `.env.example`
 3. **Acessar a aplicação**:
    - Frontend: <http://localhost:8080>
    - API REST: <http://localhost:8080/activities>
+   - Documentação OpenAPI: <http://localhost:8080/swagger-ui.html>
 
 ### Tasks Maven Disponíveis
 
@@ -178,6 +186,12 @@ Crie um arquivo `.env` baseado no `.env.example`
 GET /activities
 GET /activities?day=Monday&start_time=15:00&end_time=17:00
 GET /activities/days
+```
+
+#### Categorias
+
+```http
+GET /categories
 ```
 
 #### Inscrições
@@ -226,14 +240,17 @@ O sistema utiliza **Mongock** para realizar migrações automáticas do banco de
 ### Professores Padrão
 
 - **admin** - Administrador principal
-- **teacher.rodriguez** - Professor de artes
-- **teacher.chen** - Professor de xadrez
+- **maria** - Professora de artes e esportes
+- **jose** - Professor de xadrez e tecnologia
 
 ### Atividades Exemplo
 
-- **Art Club** - Terças e quintas, 15:30-17:00
-- **Chess Club** - Segundas e quartas, 15:30-17:00
-- **Drama Club** - Quartas e sextas, 16:00-18:00
+- **Clube de Arte** - Terças e quintas, 16:00-17:30
+- **Clube de Xadrez** - Terças e quintas, 15:30-17:00  
+- **Clube de Programação** - Segundas, quartas e sextas, 14:00-15:30
+- **Time de Futebol** - Segundas, quartas e sextas, 16:00-18:00
+- **Banda de Música** - Terças e quintas, 15:00-16:30
+- **Serviço Comunitário** - Sábados, 09:00-12:00
 
 ## 🔒 Segurança
 
