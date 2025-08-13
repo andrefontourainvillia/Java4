@@ -1,4 +1,4 @@
-package com.mergingtonhigh.schoolmanagement.presentation.mappers;
+package com.mergingtonhigh.schoolmanagement.application.mappers;
 
 import java.util.List;
 import java.util.stream.Collectors;

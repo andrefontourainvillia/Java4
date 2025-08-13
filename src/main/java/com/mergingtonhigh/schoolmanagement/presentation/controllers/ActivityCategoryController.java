@@ -51,23 +51,14 @@ public class ActivityCategoryController {
             @RequestParam String textColor,
             @RequestParam(required = false, defaultValue = "") String description) {
 
-        try {
-            ActivityCategoryDTO category = categoryUseCase.saveCategory(
-                    typeCode, label, backgroundColor, textColor, description);
-            return ResponseEntity.ok(category);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        ActivityCategoryDTO category = categoryUseCase.saveCategory(
+                typeCode, label, backgroundColor, textColor, description);
+        return ResponseEntity.ok(category);
     }
 
     @PostMapping("/{typeCode}/deactivate")
     public ResponseEntity<Map<String, String>> deactivateCategory(@PathVariable String typeCode) {
-        try {
-            categoryUseCase.deactivateCategory(typeCode);
-            return ResponseEntity.ok(Map.of("message", "Categoria desativada com sucesso"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest()
-                    .body(Map.of("error", e.getMessage()));
-        }
+        categoryUseCase.deactivateCategory(typeCode);
+        return ResponseEntity.ok(Map.of("message", "Categoria desativada com sucesso"));
     }
 }

@@ -10,7 +10,7 @@ import com.mergingtonhigh.schoolmanagement.application.dtos.TeacherDTO;
 import com.mergingtonhigh.schoolmanagement.application.services.ActivitySyncService;
 import com.mergingtonhigh.schoolmanagement.domain.entities.Teacher;
 import com.mergingtonhigh.schoolmanagement.domain.repositories.TeacherRepository;
-import com.mergingtonhigh.schoolmanagement.presentation.mappers.TeacherMapper;
+import com.mergingtonhigh.schoolmanagement.application.mappers.TeacherMapper;
 
 @Service
 public class TeacherUseCase {

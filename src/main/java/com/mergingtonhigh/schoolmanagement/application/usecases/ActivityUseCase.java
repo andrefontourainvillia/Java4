@@ -11,7 +11,7 @@ import com.mergingtonhigh.schoolmanagement.application.dtos.ActivityDTO;
 import com.mergingtonhigh.schoolmanagement.application.services.ActivitySyncService;
 import com.mergingtonhigh.schoolmanagement.domain.entities.Activity;
 import com.mergingtonhigh.schoolmanagement.domain.repositories.ActivityRepository;
-import com.mergingtonhigh.schoolmanagement.presentation.mappers.ActivityMapper;
+import com.mergingtonhigh.schoolmanagement.application.mappers.ActivityMapper;
 
 @Service
 public class ActivityUseCase {
