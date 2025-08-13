@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.CategoryReference;
+import com.mergingtonhigh.schoolmanagement.domain.valueobjects.DifficultyLevel;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.Email;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.ScheduleDetails;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.TeacherReference;
@@ -24,6 +25,7 @@ public class Activity {
     private CategoryReference category;
     private String categoryId;
     private List<String> assignedTeacherUsernames;
+    private DifficultyLevel difficultyLevel;
 
     public Activity() {
         this.participantEmails = new ArrayList<>();
@@ -38,6 +40,7 @@ public class Activity {
         this.scheduleDetails = scheduleDetails;
         this.maxParticipants = validateMaxParticipants(maxParticipants);
         this.categoryId = categoryId;
+        this.difficultyLevel = null; // Optional field, null means for all levels
         this.participantEmails = new ArrayList<>();
         this.assignedTeachers = new ArrayList<>();
         this.assignedTeacherUsernames = new ArrayList<>();
@@ -52,6 +55,21 @@ public class Activity {
         this.maxParticipants = validateMaxParticipants(maxParticipants);
         this.category = category;
         this.categoryId = category != null ? category.getId() : null;
+        this.difficultyLevel = null; // Optional field, null means for all levels
+        this.participantEmails = new ArrayList<>();
+        this.assignedTeachers = new ArrayList<>();
+        this.assignedTeacherUsernames = new ArrayList<>();
+    }
+
+    // Construtor adicional para incluir nível de dificuldade
+    public Activity(String name, String description, ScheduleDetails scheduleDetails,
+            int maxParticipants, String categoryId, DifficultyLevel difficultyLevel) {
+        this.name = validateName(name);
+        this.description = validateDescription(description);
+        this.scheduleDetails = scheduleDetails;
+        this.maxParticipants = validateMaxParticipants(maxParticipants);
+        this.categoryId = categoryId;
+        this.difficultyLevel = difficultyLevel;
         this.participantEmails = new ArrayList<>();
         this.assignedTeachers = new ArrayList<>();
         this.assignedTeacherUsernames = new ArrayList<>();
@@ -236,12 +254,29 @@ public class Activity {
         return (participantEmails.size() * 100) / maxParticipants;
     }
 
+    public DifficultyLevel getDifficultyLevel() {
+        return difficultyLevel;
+    }
+
+    public void setDifficultyLevel(DifficultyLevel difficultyLevel) {
+        this.difficultyLevel = difficultyLevel;
+    }
+
+    /**
+     * Verifica se a atividade é para todos os níveis (sem dificuldade especificada).
+     * @return true se a atividade não tem nível de dificuldade especificado
+     */
+    public boolean isForAllLevels() {
+        return difficultyLevel == null;
+    }
+
     @Override
     public String toString() {
-        return String.format("Activity{name='%s', participants=%d/%d, category='%s'}",
+        return String.format("Activity{name='%s', participants=%d/%d, category='%s', difficulty='%s'}",
                 name,
                 participantEmails.size(),
                 maxParticipants,
-                categoryId);
+                categoryId,
+                difficultyLevel != null ? difficultyLevel.getDisplayName() : "Todos os níveis");
     }
 }

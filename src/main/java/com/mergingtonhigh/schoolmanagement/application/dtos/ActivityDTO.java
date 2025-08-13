@@ -13,7 +13,8 @@ public record ActivityDTO(
                 String category,
                 ActivityCategoryDTO categoryDetails,
                 List<String> assignedTeachers, // Para compatibilidade com APIs existentes
-                List<TeacherReferenceDTO> teacherDetails) { // Dados embarcados otimizados
+                List<TeacherReferenceDTO> teacherDetails, // Dados embarcados otimizados
+                String difficultyLevel) { // Nível de dificuldade como string (display name)
         public record ScheduleDetailsDTO(
                         List<String> days,
                         String startTime,
