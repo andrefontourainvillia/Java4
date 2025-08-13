@@ -4,7 +4,7 @@
 
 > O check abaixo será utilizado no exercicio 3 deste repositório, o agente não deve marcar automaticamente e caso seja regerado o arquivo deverá manter a marcação anterior
 
-[ ] - Aprendi sobre como configurar o copilot-instructions.
+[X] - Aprendi sobre como configurar o copilot-instructions.
 
 ## Architecture Overview
 
