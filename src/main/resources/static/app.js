@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let searchQuery = "";
   let currentDay = "";
   let currentTimeRange = "";
+  let viewMode = "filter"; // "filter" or "group"
 
   // Load activity categories from backend
   async function loadActivityCategories() {
@@ -458,8 +459,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // Get activity type - use backend data if available
       const activityType = getActivityType(name, details.description, details.category);
 
-      // Apply category filter (only if backend didn't already filter)
-      if (currentFilter !== "all" && activityType !== currentFilter) {
+      // Apply category filter (only in filter mode, not in group mode)
+      if (viewMode === "filter" && currentFilter !== "all" && activityType !== currentFilter) {
         return;
       }
 
@@ -507,9 +508,65 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Display filtered activities
+    // Display activities based on view mode
+    if (viewMode === "group") {
+      displayGroupedActivities(filteredActivities);
+    } else {
+      // Display filtered activities (original behavior)
+      Object.entries(filteredActivities).forEach(([name, details]) => {
+        renderActivityCard(name, details);
+      });
+    }
+  }
+
+  // Function to display activities grouped by category
+  function displayGroupedActivities(filteredActivities) {
+    // Group activities by category
+    const groupedActivities = {};
+    
     Object.entries(filteredActivities).forEach(([name, details]) => {
-      renderActivityCard(name, details);
+      // Get category information
+      let categoryInfo = {
+        id: 'outros',
+        label: 'Outros',
+        color: '#666666'
+      };
+
+      if (details.categoryDetails) {
+        // Use backend category details if available
+        categoryInfo = {
+          id: details.categoryDetails.type || details.categoryDetails.id,
+          label: details.categoryDetails.label,
+          color: details.categoryDetails.backgroundColor
+        };
+      } else if (details.category && activityTypes[details.category.toLowerCase()]) {
+        // Use category from activityTypes
+        const categoryType = activityTypes[details.category.toLowerCase()];
+        categoryInfo = {
+          id: details.category.toLowerCase(),
+          label: categoryType.label,
+          color: categoryType.color
+        };
+      }
+
+      // Initialize group if it doesn't exist
+      if (!groupedActivities[categoryInfo.id]) {
+        groupedActivities[categoryInfo.id] = {
+          info: categoryInfo,
+          activities: []
+        };
+      }
+
+      // Add activity to the group
+      groupedActivities[categoryInfo.id].activities.push({ name, details });
+    });
+
+    // Sort groups by label and render them
+    const sortedGroups = Object.entries(groupedActivities)
+      .sort(([, a], [, b]) => a.info.label.localeCompare(b.info.label));
+
+    sortedGroups.forEach(([groupId, group]) => {
+      renderActivityGroup(group.info, group.activities);
     });
   }
 
@@ -547,8 +604,61 @@ document.addEventListener("DOMContentLoaded", () => {
     return false;
   }
 
+  // Function to render an activity group
+  function renderActivityGroup(categoryInfo, activities) {
+    // Create group container
+    const groupContainer = document.createElement("div");
+    groupContainer.className = "activity-group";
+
+    // Create group header
+    const groupHeader = document.createElement("div");
+    groupHeader.className = "activity-group-header";
+    
+    const groupTitle = document.createElement("h3");
+    groupTitle.className = "activity-group-title";
+    
+    // Create color icon
+    const colorIcon = document.createElement("span");
+    colorIcon.className = "activity-group-icon";
+    colorIcon.style.backgroundColor = categoryInfo.color;
+    
+    // Create count badge
+    const countBadge = document.createElement("span");
+    countBadge.className = "activity-group-count";
+    countBadge.textContent = activities.length;
+    
+    // Assemble header
+    groupTitle.appendChild(colorIcon);
+    groupTitle.appendChild(document.createTextNode(categoryInfo.label));
+    groupTitle.appendChild(countBadge);
+    groupHeader.appendChild(groupTitle);
+    
+    // Create activities container
+    const activitiesContainer = document.createElement("div");
+    activitiesContainer.className = "activity-group-activities";
+    
+    // Render each activity in the group
+    activities.forEach(({ name, details }) => {
+      const activityCard = createActivityCardElement(name, details);
+      activitiesContainer.appendChild(activityCard);
+    });
+    
+    // Assemble the group
+    groupContainer.appendChild(groupHeader);
+    groupContainer.appendChild(activitiesContainer);
+    
+    // Add to activities list
+    activitiesList.appendChild(groupContainer);
+  }
+
   // Function to render a single activity card
   function renderActivityCard(name, details) {
+    const activityCard = createActivityCardElement(name, details);
+    activitiesList.appendChild(activityCard);
+  }
+
+  // Function to create activity card element (shared between grouped and individual display)
+  function createActivityCardElement(name, details) {
     const activityCard = document.createElement("div");
     activityCard.className = "activity-card";
 
@@ -738,7 +848,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    activitiesList.appendChild(activityCard);
+    return activityCard;
   }
 
   // Event listeners for search and filter
@@ -779,6 +889,20 @@ document.addEventListener("DOMContentLoaded", () => {
       // Update current time filter and fetch activities
       currentTimeRange = button.dataset.time;
       fetchActivities();
+    });
+  });
+
+  // Add event listeners for view mode toggle
+  const viewModeButtons = document.querySelectorAll('.view-mode-btn');
+  viewModeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      // Update active class
+      viewModeButtons.forEach((btn) => btn.classList.remove("active"));
+      button.classList.add("active");
+
+      // Update view mode and refresh display
+      viewMode = button.dataset.mode;
+      displayFilteredActivities();
     });
   });
 
