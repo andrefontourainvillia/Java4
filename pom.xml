@@ -130,6 +130,14 @@
             <scope>test</scope>
         </dependency>
         
+        <!-- WireMock for integration testing -->
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-jre8</artifactId>
+            <version>3.0.1</version>
+            <scope>test</scope>
+        </dependency>
+        
         <!-- OpenAPI Documentation -->
         <dependency>
             <groupId>org.springdoc</groupId>
