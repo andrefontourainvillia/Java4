@@ -20,6 +20,4 @@ public interface MongoActivityRepository extends MongoRepository<Activity, Strin
 
     @Query("{ 'scheduleDetails.days': { $in: [?0] }, 'scheduleDetails.startTime': { $gte: ?1 }, 'scheduleDetails.endTime': { $lte: ?2 } }")
     List<Activity> findByScheduleDetailsDaysAndTimeRange(String day, LocalTime startTime, LocalTime endTime);
-
-    List<Activity> findByCategoryId(String categoryId);
 }

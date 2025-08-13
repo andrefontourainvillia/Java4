@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.mergingtonhigh.schoolmanagement.domain.enums.ActivityCategory;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.Email;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.ScheduleDetails;
 
@@ -27,13 +28,15 @@ class ActivityTest {
                 "Aprenda estratégias de xadrez",
                 schedule,
                 12,
-                "academic");
+                ActivityCategory.ACADEMIC);
 
         assertEquals("Clube de Xadrez", activity.getName());
         assertEquals("Aprenda estratégias de xadrez", activity.getDescription());
         assertEquals(12, activity.getMaxParticipants());
         assertEquals(0, activity.getCurrentParticipantCount());
         assertTrue(activity.canAddParticipant());
+        assertTrue(activity.canTeachersRegisterStudents());
+        assertEquals(ActivityCategory.ACADEMIC, activity.getCategory());
     }
 
     @Test
@@ -44,7 +47,7 @@ class ActivityTest {
                 LocalTime.of(17, 0));
 
         assertThrows(IllegalArgumentException.class,
-                () -> new Activity(null, "Description", schedule, 12, "academic"));
+                () -> new Activity(null, "Description", schedule, 12, ActivityCategory.ACADEMIC));
     }
 
     @Test
@@ -88,54 +91,16 @@ class ActivityTest {
     }
 
     @Test
-    void shouldAssignTeacherSuccessfully() {
+    void shouldSetTeacherRegistrationPermission() {
         Activity activity = createTestActivity();
-        String teacherUsername = "teacher1";
-
-        activity.assignTeacher(teacherUsername);
-
-        assertTrue(activity.isTeacherAssigned(teacherUsername));
-        assertEquals(1, activity.getAssignedTeachers().size());
-        assertTrue(activity.getAssignedTeachers().contains(teacherUsername));
-    }
-
-    @Test
-    void shouldNotAddDuplicateTeacher() {
-        Activity activity = createTestActivity();
-        String teacherUsername = "teacher1";
-
-        activity.assignTeacher(teacherUsername);
-        activity.assignTeacher(teacherUsername);
-
-        assertEquals(1, activity.getAssignedTeachers().size());
-        assertTrue(activity.isTeacherAssigned(teacherUsername));
-    }
-
-    @Test
-    void shouldRemoveTeacherSuccessfully() {
-        Activity activity = createTestActivity();
-        String teacherUsername = "teacher1";
-        activity.assignTeacher(teacherUsername);
-
-        activity.removeTeacher(teacherUsername);
-
-        assertFalse(activity.isTeacherAssigned(teacherUsername));
-        assertEquals(0, activity.getAssignedTeachers().size());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenAssigningNullTeacher() {
-        Activity activity = createTestActivity();
-
-        assertThrows(IllegalArgumentException.class, () -> activity.assignTeacher((String) null));
-    }
-
-    @Test
-    void shouldThrowExceptionWhenAssigningEmptyTeacherUsername() {
-        Activity activity = createTestActivity();
-
-        assertThrows(IllegalArgumentException.class, () -> activity.assignTeacher(""));
-        assertThrows(IllegalArgumentException.class, () -> activity.assignTeacher("   "));
+        
+        assertTrue(activity.canTeachersRegisterStudents()); // Default is true
+        
+        activity.setCanTeachersRegisterStudents(false);
+        assertFalse(activity.canTeachersRegisterStudents());
+        
+        activity.setCanTeachersRegisterStudents(true);
+        assertTrue(activity.canTeachersRegisterStudents());
     }
 
     @Test
@@ -167,6 +132,6 @@ class ActivityTest {
                 "Test Description",
                 schedule,
                 12,
-                "academic");
+                ActivityCategory.ACADEMIC);
     }
 }

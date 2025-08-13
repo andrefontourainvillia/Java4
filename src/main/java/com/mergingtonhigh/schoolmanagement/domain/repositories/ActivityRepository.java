@@ -20,8 +20,6 @@ public interface ActivityRepository {
 
     List<String> findAllUniqueDays();
 
-    List<Activity> findByCategoryId(String categoryId);
-
     Activity save(Activity activity);
 
     void deleteByName(String name);

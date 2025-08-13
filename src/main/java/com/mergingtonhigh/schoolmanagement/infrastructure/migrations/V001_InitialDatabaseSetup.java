@@ -10,8 +10,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.mergingtonhigh.schoolmanagement.domain.entities.Activity;
-import com.mergingtonhigh.schoolmanagement.domain.entities.ActivityCategory;
 import com.mergingtonhigh.schoolmanagement.domain.entities.Teacher;
+import com.mergingtonhigh.schoolmanagement.domain.enums.ActivityCategory;
 import com.mergingtonhigh.schoolmanagement.domain.valueobjects.ScheduleDetails;
 
 import io.mongock.api.annotations.ChangeUnit;
@@ -35,25 +35,7 @@ public class V001_InitialDatabaseSetup {
         @Execution
         public void changeSet() {
                 List<Teacher> teachers = seedTeachers();
-                List<ActivityCategory> categories = seedCategories();
-                seedActivities(teachers, categories);
-        }
-
-        private List<ActivityCategory> seedCategories() {
-                List<ActivityCategory> categories = Arrays.asList(
-                                new ActivityCategory("sports", "Esportes", "#28a745", "#ffffff",
-                                                "Atividades físicas e esportivas"),
-                                new ActivityCategory("arts", "Artes", "#6f42c1", "#ffffff",
-                                                "Atividades artísticas e criativas"),
-                                new ActivityCategory("academic", "Acadêmico", "#007bff", "#ffffff",
-                                                "Atividades educacionais e acadêmicas"),
-                                new ActivityCategory("technology", "Tecnologia", "#17a2b8", "#ffffff",
-                                                "Atividades relacionadas à tecnologia"),
-                                new ActivityCategory("community", "Comunidade", "#fd7e14", "#ffffff",
-                                                "Atividades de serviço comunitário"));
-
-                mongoTemplate.insertAll(categories);
-                return categories;
+                seedActivities(teachers);
         }
 
         private List<Teacher> seedTeachers() {
@@ -71,15 +53,15 @@ public class V001_InitialDatabaseSetup {
                 return teachers;
         }
 
-        private void seedActivities(List<Teacher> teachers, List<ActivityCategory> categories) {
+        private void seedActivities(List<Teacher> teachers) {
                 Activity chessClub = new Activity(
                                 "Clube de Xadrez",
                                 "Desenvolva estratégias de pensamento crítico através do xadrez",
                                 new ScheduleDetails(Arrays.asList("Tuesday", "Thursday"), LocalTime.of(15, 30),
                                                 LocalTime.of(17, 0)),
                                 20,
-                                findCategoryId(categories, "academic"));
-                chessClub.assignTeacher("jose");
+                                ActivityCategory.ACADEMIC);
+                chessClub.setCanTeachersRegisterStudents(true);
                 chessClub.setParticipants(Arrays.asList("michael@mergington.edu", "daniel@mergington.edu"));
                 mongoTemplate.save(chessClub);
 
@@ -89,8 +71,8 @@ public class V001_InitialDatabaseSetup {
                                 new ScheduleDetails(Arrays.asList("Monday", "Wednesday", "Friday"), LocalTime.of(14, 0),
                                                 LocalTime.of(15, 30)),
                                 15,
-                                findCategoryId(categories, "technology"));
-                programmingClass.assignTeacher("jose");
+                                ActivityCategory.TECHNOLOGY);
+                programmingClass.setCanTeachersRegisterStudents(true);
                 programmingClass.setParticipants(Arrays.asList("emma@mergington.edu", "sophia@mergington.edu"));
                 mongoTemplate.save(programmingClass);
 
@@ -100,8 +82,8 @@ public class V001_InitialDatabaseSetup {
                                 new ScheduleDetails(Arrays.asList("Tuesday", "Thursday"), LocalTime.of(16, 0),
                                                 LocalTime.of(17, 30)),
                                 25,
-                                findCategoryId(categories, "arts"));
-                artClub.assignTeacher("maria");
+                                ActivityCategory.ARTS);
+                artClub.setCanTeachersRegisterStudents(true);
                 artClub.setParticipants(Arrays.asList("amelia@mergington.edu", "harper@mergington.edu"));
                 mongoTemplate.save(artClub);
 
@@ -111,8 +93,8 @@ public class V001_InitialDatabaseSetup {
                                 new ScheduleDetails(Arrays.asList("Monday", "Wednesday", "Friday"), LocalTime.of(16, 0),
                                                 LocalTime.of(18, 0)),
                                 30,
-                                findCategoryId(categories, "sports"));
-                soccerTeam.assignTeacher("maria");
+                                ActivityCategory.SPORTS);
+                soccerTeam.setCanTeachersRegisterStudents(false); // Only admins can register for sports team
                 soccerTeam.setParticipants(Arrays.asList("liam@mergington.edu", "noah@mergington.edu"));
                 mongoTemplate.save(soccerTeam);
 
@@ -122,9 +104,8 @@ public class V001_InitialDatabaseSetup {
                                 new ScheduleDetails(Arrays.asList("Tuesday", "Thursday"), LocalTime.of(15, 0),
                                                 LocalTime.of(16, 30)),
                                 35,
-                                findCategoryId(categories, "arts"));
-                musicBand.assignTeacher("maria");
-                musicBand.assignTeacher("jose");
+                                ActivityCategory.ARTS);
+                musicBand.setCanTeachersRegisterStudents(true);
                 mongoTemplate.save(musicBand);
 
                 Activity communityService = new Activity(
@@ -132,9 +113,8 @@ public class V001_InitialDatabaseSetup {
                                 "Projetos de serviço comunitário e voluntariado",
                                 new ScheduleDetails(Arrays.asList("Saturday"), LocalTime.of(9, 0), LocalTime.of(12, 0)),
                                 40,
-                                findCategoryId(categories, "community"));
-                communityService.assignTeacher("maria");
-                communityService.assignTeacher("jose");
+                                ActivityCategory.CLUBS);
+                communityService.setCanTeachersRegisterStudents(true);
                 mongoTemplate.save(communityService);
         }
 
@@ -142,22 +122,12 @@ public class V001_InitialDatabaseSetup {
                 return new Teacher(username, displayName, passwordEncoder.encode(rawPassword), role);
         }
 
-        private String findCategoryId(List<ActivityCategory> categories, String typeCode) {
-                return categories.stream()
-                                .filter(cat -> cat.getType().equals(typeCode))
-                                .findFirst()
-                                .map(ActivityCategory::getId)
-                                .orElseThrow(() -> new IllegalStateException("Category not found: " + typeCode));
-        }
-
         @RollbackExecution
         public void rollback() {
                 mongoTemplate.remove(new Query(), Activity.class);
                 mongoTemplate.remove(new Query(), Teacher.class);
-                mongoTemplate.remove(new Query(), ActivityCategory.class);
 
                 mongoTemplate.indexOps(Activity.class).dropAllIndexes();
                 mongoTemplate.indexOps(Teacher.class).dropAllIndexes();
-                mongoTemplate.indexOps(ActivityCategory.class).dropAllIndexes();
         }
 }
