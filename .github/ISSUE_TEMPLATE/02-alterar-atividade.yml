@@ -1,0 +1,188 @@
+name: Alterações em Atividade Existente
+description: Solicitar modificações em uma atividade já criada
+title: "[ALTERAR ATIVIDADE] "
+labels: ["enhancement", "modificacao-atividade", "copilot-ready"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## ✏️ Solicitação de Alteração em Atividade
+        
+        Use este formulário para solicitar modificações em uma atividade extracurricular já existente.
+        Especifique claramente quais mudanças são necessárias.
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Nome da Atividade a Ser Modificada
+      description: Nome exato da atividade como aparece atualmente no sistema
+      placeholder: ex. Clube de Xadrez, Aula de Programação
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: change-types
+    attributes:
+      label: Tipo de Alterações Necessárias
+      description: Selecione todas as modificações que precisam ser feitas
+      options:
+        - label: Alterar nome da atividade
+        - label: Modificar descrição
+        - label: Alterar horários (início/fim)
+        - label: Mudar dias da semana
+        - label: Alterar número máximo de participantes
+        - label: Trocar categoria
+        - label: Alterar professor responsável
+        - label: Outras alterações
+
+  - type: input
+    id: new-name
+    attributes:
+      label: Novo Nome (se aplicável)
+      description: Novo nome para a atividade, se for o caso
+      placeholder: ex. Clube de Xadrez Avançado
+
+  - type: textarea
+    id: new-description
+    attributes:
+      label: Nova Descrição (se aplicável)
+      description: Nova descrição para a atividade, se necessário
+      placeholder: Descreva a nova versão da atividade...
+      rows: 4
+
+  - type: checkboxes
+    id: new-schedule-days
+    attributes:
+      label: Novos Dias da Semana (se aplicável)
+      description: Marque os novos dias se for alterar o cronograma
+      options:
+        - label: Segunda-feira
+        - label: Terça-feira
+        - label: Quarta-feira
+        - label: Quinta-feira
+        - label: Sexta-feira
+        - label: Sábado
+        - label: Domingo
+
+  - type: input
+    id: new-start-time
+    attributes:
+      label: Novo Horário de Início (se aplicável)
+      description: Novo horário de início (formato 24h)
+      placeholder: ex. 15:30
+
+  - type: input
+    id: new-end-time
+    attributes:
+      label: Novo Horário de Término (se aplicável)
+      description: Novo horário de término (formato 24h)
+      placeholder: ex. 17:00
+
+  - type: input
+    id: new-max-participants
+    attributes:
+      label: Novo Número Máximo de Participantes (se aplicável)
+      description: Nova capacidade de alunos
+      placeholder: ex. 30
+
+  - type: dropdown
+    id: new-category
+    attributes:
+      label: Nova Categoria (se aplicável)
+      description: Nova categoria para a atividade
+      options:
+        - (Não alterar)
+        - Esportes e Recreação
+        - Artes e Cultura
+        - Ciências e Tecnologia
+        - Idiomas
+        - Voluntariado e Serviço Comunitário
+        - Liderança e Desenvolvimento Pessoal
+        - Outros
+
+  - type: input
+    id: new-teacher
+    attributes:
+      label: Novo Professor Responsável (se aplicável)
+      description: Nome de usuário do novo professor responsável
+      placeholder: ex. mchen
+
+  - type: textarea
+    id: reason-for-changes
+    attributes:
+      label: Motivo das Alterações
+      description: Explique por que essas mudanças são necessárias
+      placeholder: Explique o contexto e necessidade das alterações...
+      rows: 3
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: student-impact
+    attributes:
+      label: Impacto nos Alunos Matriculados
+      description: Como tratar alunos já inscritos na atividade?
+      options:
+        - label: Manter todos os alunos já inscritos
+        - label: Notificar alunos sobre as mudanças
+        - label: Permitir que alunos cancelem a inscrição devido às mudanças
+        - label: Outras considerações (especificar em observações)
+
+  - type: textarea
+    id: additional-considerations
+    attributes:
+      label: Observações Adicionais
+      description: Qualquer outra informação importante sobre as alterações
+      placeholder: Considerações especiais, prazos, equipamentos, etc.
+      rows: 3
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioridade/Urgência
+      description: Quando essas alterações precisam ser implementadas?
+      options:
+        - Baixa - Pode aguardar (mais de 2 semanas)
+        - Média - Próximas 2 semanas
+        - Alta - Esta semana
+        - Urgente - Hoje/amanhã
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## ✅ Critérios de Aceitação (preenchido automaticamente)
+        
+        **Para o agente de codificação:**
+        
+        - [ ] Localizar atividade existente pelo nome especificado
+        - [ ] Validar que atividade existe no sistema
+        - [ ] Aplicar apenas as modificações selecionadas
+        - [ ] Verificar conflitos de horário se alterando cronograma
+        - [ ] Validar nova capacidade vs alunos já inscritos
+        - [ ] Verificar se novo professor existe no sistema
+        - [ ] Preservar dados não modificados
+        - [ ] Manter lista de alunos inscritos (salvo especificado)
+        - [ ] Testar modificações funcionam corretamente
+        - [ ] Validar que interface reflete as mudanças
+        
+        ## 🔧 Dicas de Implementação
+        
+        **Para o desenvolvedor:**
+        1. Use `ActivityUseCase.updateActivity()` ou métodos similares
+        2. Primeiro busque a atividade por nome via `ActivityRepository`
+        3. Aplique mudanças usando setters da entidade `Activity`
+        4. Valide restrições de domínio (capacidade, horários, etc.)
+        5. Se alterando capacidade, verifique `getCurrentParticipantCount()`
+        6. Para novos professores, valide via `TeacherRepository`
+        7. Sincronize dados embarcados se necessário via `ActivitySyncService`
+        
+        ## 📋 Contexto Técnico
+        
+        - Método principal: `Activity.setXXX()` para cada campo alterado
+        - Validações: Usar validadores da entidade `Activity`
+        - Conflitos: Verificar via `findByDayAndTimeRange()` se alterando horário
+        - Dados embarcados: Sincronizar `TeacherReference` e `CategoryReference`
+        - Transações: Usar `@Transactional` para mudanças múltiplas

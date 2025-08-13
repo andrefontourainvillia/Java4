@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Mergington High Tech Support
+    url: mailto:tech-support@mergingtonhigh.edu
+    about: Para problemas técnicos urgentes ou de acesso ao sistema
+  - name: Documentação do Sistema
+    url: https://github.com/andrefontourainvillia/Java4/blob/main/README.md
+    about: Guia de uso e documentação técnica

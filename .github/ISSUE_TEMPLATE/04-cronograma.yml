@@ -1,0 +1,199 @@
+name: Problemas de Cronograma
+description: Relatar conflitos de horário ou problemas de agendamento
+title: "[CRONOGRAMA] "
+labels: ["bug", "cronograma", "copilot-ready"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 📅 Problemas de Cronograma e Horários
+        
+        Use este formulário para relatar conflitos de horário, problemas de agendamento ou inconsistências no cronograma das atividades.
+
+  - type: dropdown
+    id: problem-type
+    attributes:
+      label: Tipo de Problema de Cronograma
+      description: Qual é o problema principal?
+      options:
+        - Duas atividades no mesmo horário/local
+        - Professor designado para múltiplas atividades simultâneas
+        - Horário da atividade está incorreto
+        - Atividade não aparece no cronograma
+        - Dias da semana incorretos
+        - Conflito com horário de aulas regulares
+        - Outros problemas de agendamento
+    validations:
+      required: true
+
+  - type: input
+    id: primary-activity
+    attributes:
+      label: Atividade Principal Afetada
+      description: Nome da atividade que está com problema de horário
+      placeholder: ex. Clube de Xadrez
+    validations:
+      required: true
+
+  - type: input
+    id: conflicting-activity
+    attributes:
+      label: Atividade em Conflito (se aplicável)
+      description: Nome da segunda atividade que está em conflito
+      placeholder: ex. Aula de Programação
+
+  - type: input
+    id: current-schedule
+    attributes:
+      label: Horário Atual Problemático
+      description: Horário e dias que estão causando problemas
+      placeholder: ex. Terças e Quintas, 14:30-16:00
+    validations:
+      required: true
+
+  - type: input
+    id: teacher-affected
+    attributes:
+      label: Professor Afetado (se aplicável)
+      description: Nome de usuário do professor envolvido no conflito
+      placeholder: ex. mrodriguez
+
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: Descrição Detalhada do Problema
+      description: Explique exatamente qual é o conflito ou problema
+      placeholder: |
+        Exemplo: "O Clube de Xadrez e a Aula de Programação estão marcados para o mesmo horário (Terças 14:30-16:00) e ambos têm o professor Rodriguez como responsável. Isso está impedindo que os alunos se inscrevam adequadamente."
+      rows: 4
+    validations:
+      required: true
+
+  - type: input
+    id: preferred-schedule
+    attributes:
+      label: Horário Desejado/Sugerido
+      description: Qual seria o horário ideal para resolver o conflito?
+      placeholder: ex. Terças 16:00-17:30
+
+  - type: checkboxes
+    id: suggested-days
+    attributes:
+      label: Dias da Semana Desejados (se aplicável)
+      description: Marque os dias ideais para a atividade
+      options:
+        - label: Segunda-feira
+        - label: Terça-feira
+        - label: Quarta-feira
+        - label: Quinta-feira
+        - label: Sexta-feira
+        - label: Sábado
+        - label: Domingo
+
+  - type: dropdown
+    id: flexibility
+    attributes:
+      label: Flexibilidade de Horário
+      description: O quão flexível é para mudanças de horário?
+      options:
+        - Muito flexível - qualquer horário funciona
+        - Flexível - alguns horários funcionam
+        - Pouco flexível - poucos horários funcionam
+        - Inflexível - horário deve ser específico
+    validations:
+      required: true
+
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Restrições e Limitações
+      description: Há alguma limitação específica (equipamentos, salas, etc.)?
+      placeholder: |
+        Ex: "Precisa ser no laboratório de informática", "Professor só está disponível nas tardes", "Não pode coincidir com horário de educação física"
+      rows: 3
+
+  - type: dropdown
+    id: impact-level
+    attributes:
+      label: Nível de Impacto
+      description: Qual o impacto atual deste problema?
+      options:
+        - Baixo - Inconveniente mas ainda funciona
+        - Médio - Está causando confusão
+        - Alto - Está impedindo funcionalidade
+        - Crítico - Sistema inutilizável para agendamento
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: affected-areas
+    attributes:
+      label: Áreas Afetadas
+      description: Que partes do sistema estão sendo impactadas?
+      options:
+        - label: Inscrição de alunos
+        - label: Visualização do cronograma
+        - label: Notificações/lembretes
+        - label: Relatórios de atividades
+        - label: Sistema de presença
+        - label: Outros
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Urgência para Resolução
+      description: Quando este problema precisa ser resolvido?
+      options:
+        - Baixa - Pode aguardar (mais de 1 semana)
+        - Média - Próxima semana
+        - Alta - Próximos dias
+        - Urgente - Hoje/amanhã
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Informações Adicionais
+      description: Qualquer outra informação relevante sobre o problema de cronograma
+      placeholder: Contexto adicional, soluções tentadas, observações...
+      rows: 3
+
+  - type: markdown
+    attributes:
+      value: |
+        ## ✅ Critérios de Aceitação (preenchido automaticamente)
+        
+        **Para o agente de codificação:**
+        
+        - [ ] Identificar conflitos específicos no cronograma
+        - [ ] Verificar lógica de detecção de conflitos
+        - [ ] Validar método `findByDayAndTimeRange()` funciona corretamente
+        - [ ] Checar se professor pode ter múltiplas atividades simultâneas
+        - [ ] Implementar ou corrigir validação de conflitos
+        - [ ] Atualizar horários conforme sugerido (se viável)
+        - [ ] Testar que conflitos são detectados e prevenidos
+        - [ ] Verificar que mudanças não criam novos conflitos
+        - [ ] Validar que interface mostra horários corretos
+        - [ ] Testar queries de busca por horário funcionam
+        
+        ## 🔧 Dicas de Implementação
+        
+        **Para o desenvolvedor:**
+        1. Examine `ScheduleDetails` value object e seus métodos
+        2. Verifique `ActivityRepository.findByDayAndTimeRange()`
+        3. Implemente validação de conflitos em `ActivityUseCase`
+        4. Considere método para `findConflictingActivities()`
+        5. Valide overlaps de horário: `LocalTime.isBefore()` e `isAfter()`
+        6. Cheque se mesmo professor em múltiplas atividades simultâneas
+        7. Use `Activity.getAssignedTeacherUsernames()` para verificar professores
+        
+        ## 📋 Contexto Técnico
+        
+        - Value Object: `ScheduleDetails` com `List<String> days` e `LocalTime`
+        - Queries: `findByDay()`, `findByTimeRange()`, `findByDayAndTimeRange()`
+        - Validação: Comparar `startTime` e `endTime` entre atividades
+        - Conflitos: Mesmos dias E horários sobrepostos
+        - Professor: Verificar via `assignedTeacherUsernames` list
+        - Frontend: Cronograma visual deve refletir mudanças

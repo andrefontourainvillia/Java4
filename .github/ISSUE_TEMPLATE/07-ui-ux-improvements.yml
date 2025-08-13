@@ -1,0 +1,230 @@
+name: Melhorias de Interface (UI/UX)
+description: Solicitar melhorias na interface e experiência do usuário
+title: "[UI/UX] "
+labels: ["enhancement", "ui-ux", "interface", "copilot-ready"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🎨 Melhorias de Interface e Experiência do Usuário
+        
+        Use este formulário para solicitar melhorias na interface, usabilidade, design ou experiência geral do usuário.
+        Seja específico sobre o que está difícil de usar e como poderia ser melhorado.
+
+  - type: dropdown
+    id: improvement-type
+    attributes:
+      label: Tipo de Melhoria
+      description: Que tipo de melhoria de interface você está solicitando?
+      options:
+        - Layout e organização visual
+        - Cores e aparência geral
+        - Facilidade de navegação
+        - Formulários mais fáceis de usar
+        - Mensagens e feedback para usuário
+        - Responsividade (funcionar melhor em celular/tablet)
+        - Velocidade e performance da interface
+        - Acessibilidade para pessoas com deficiência
+        - Outros melhoramentos visuais
+    validations:
+      required: true
+
+  - type: input
+    id: page-screen-affected
+    attributes:
+      label: Página/Tela Afetada
+      description: Qual página ou tela específica precisa de melhoria?
+      placeholder: "ex: Página de login, Lista de atividades, Formulário de inscrição"
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-problem
+    attributes:
+      label: Problema Atual com a Interface
+      description: O que está difícil, confuso ou problemático na interface atual?
+      placeholder: |
+        Exemplo: "A página de lista de atividades está muito confusa, é difícil encontrar as informações importantes como horários e vagas disponíveis. Os botões são pequenos demais e as cores não destacam as informações importantes."
+      rows: 4
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-improvement
+    attributes:
+      label: Melhoria Proposta
+      description: Como você imagina que deveria ser a interface melhorada?
+      placeholder: |
+        Exemplo: "Gostaria que cada atividade aparecesse em um cartão separado, com o nome da atividade em destaque, horários bem visíveis, indicador visual de vagas (verde=disponível, vermelho=lotada), e botão grande e claro para inscrição."
+      rows: 4
+    validations:
+      required: true
+
+  - type: dropdown
+    id: user-experience-impact
+    attributes:
+      label: Impacto na Experiência do Usuário
+      description: Como esta melhoria impactaria o uso do sistema?
+      options:
+        - Facilitaria muito o uso diário
+        - Resolveria confusões frequentes
+        - Pouparia tempo significativo
+        - Tornaria sistema mais profissional
+        - Melhoraria acessibilidade
+        - Funcionaria melhor em dispositivos móveis
+        - Outros benefícios de usabilidade
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: specific-elements
+    attributes:
+      label: Elementos Específicos para Melhorar
+      description: Que elementos da interface precisam de atenção?
+      options:
+        - label: Botões (tamanho, cor, posição)
+        - label: Formulários (campos, labels, validação)
+        - label: Tabelas e listas
+        - label: Cores e contrastes
+        - label: Tipografia (tamanho e tipo de fonte)
+        - label: Layout geral da página
+        - label: Navegação entre páginas
+        - label: Mensagens de erro/sucesso
+        - label: Ícones e símbolos visuais
+        - label: Espaçamento e organização
+
+  - type: dropdown
+    id: device-priority
+    attributes:
+      label: Prioridade de Dispositivo
+      description: Em que tipo de dispositivo esta melhoria é mais importante?
+      options:
+        - Computador/Desktop (principal)
+        - Tablet (principal)
+        - Celular (principal)
+        - Todos os dispositivos igualmente
+        - Não sei/tanto faz
+
+  - type: textarea
+    id: user-workflow
+    attributes:
+      label: Fluxo de Trabalho do Usuário
+      description: Descreva o que você normalmente faz nesta tela/página
+      placeholder: |
+        Exemplo: "Entro na página para ver quais atividades têm vagas, preciso verificar os horários para ver se não conflitam com minhas aulas, e depois quero inscrever meus alunos rapidamente."
+      rows: 3
+    validations:
+      required: true
+
+  - type: dropdown
+    id: frequency-of-use
+    attributes:
+      label: Frequência de Uso
+      description: Com que frequência você usa esta parte do sistema?
+      options:
+        - Todos os dias
+        - Algumas vezes por semana
+        - Uma vez por semana
+        - Algumas vezes por mês
+        - Raramente
+    validations:
+      required: true
+
+  - type: textarea
+    id: examples-inspiration
+    attributes:
+      label: Exemplos ou Inspiração (opcional)
+      description: Conhece algum site/sistema com interface que funciona bem para algo similar?
+      placeholder: |
+        Ex: "O Google Calendar tem uma forma muito clara de mostrar horários", "O site X tem botões que são fáceis de ver"
+      rows: 2
+
+  - type: dropdown
+    id: technical-knowledge
+    attributes:
+      label: Conhecimento Técnico
+      description: Qual seu nível de conhecimento técnico?
+      options:
+        - Básico - uso apenas o sistema
+        - Intermediário - entendo um pouco de web
+        - Avançado - sei HTML/CSS
+        - Muito avançado - sou desenvolvedor
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: accessibility-needs
+    attributes:
+      label: Necessidades de Acessibilidade (se aplicável)
+      description: Alguma necessidade específica de acessibilidade?
+      options:
+        - label: Melhor contraste para pessoas com baixa visão
+        - label: Fonte maior/mais legível
+        - label: Compatibilidade com leitores de tela
+        - label: Navegação mais fácil por teclado
+        - label: Redução de animações/movimentos
+        - label: Não se aplica/não sei
+
+  - type: dropdown
+    id: priority-level
+    attributes:
+      label: Nível de Prioridade
+      description: Quão importante é esta melhoria para você?
+      options:
+        - Baixa - seria bom ter
+        - Média - melhoraria bastante meu trabalho
+        - Alta - está dificultando meu trabalho
+        - Crítica - está impedindo uso efetivo
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Contexto Adicional
+      description: Qualquer outra informação sobre esta melhoria de interface
+      placeholder: "Feedback de outros usuários, situações específicas, etc."
+      rows: 3
+
+  - type: markdown
+    attributes:
+      value: |
+        ## ✅ Critérios de Aceitação (preenchido automaticamente)
+        
+        **Para o agente de codificação:**
+        
+        - [ ] Analisar interface atual e identificar problemas específicos
+        - [ ] Implementar melhorias visuais/layout conforme descrito
+        - [ ] Melhorar usabilidade dos elementos mencionados
+        - [ ] Verificar responsividade em diferentes dispositivos
+        - [ ] Testar navegação e fluxo do usuário
+        - [ ] Implementar melhor feedback visual para usuário
+        - [ ] Verificar acessibilidade básica (contrastes, tamanhos)
+        - [ ] Validar que melhorias não quebram funcionalidade
+        - [ ] Testar em navegadores principais
+        - [ ] Documentar mudanças visuais se necessário
+        
+        ## 🔧 Dicas de Implementação
+        
+        **Para o desenvolvedor:**
+        1. Arquivos frontend estão em `src/main/resources/static/`
+        2. Use CSS responsivo para diferentes dispositivos
+        3. Considere frameworks CSS como Bootstrap ou Tailwind
+        4. Implemente melhor estrutura HTML semântica
+        5. Use cores com contraste adequado para acessibilidade
+        6. Adicione feedback visual para ações do usuário
+        7. Teste em Chrome, Firefox, Safari, Edge
+        8. Use media queries para responsividade
+        9. Considere JavaScript para interatividade se necessário
+        
+        ## 📋 Contexto Técnico
+        
+        - Frontend: Recursos estáticos servidos pelo Spring Boot
+        - HTML: Templates ou arquivos estáticos em `/static/`
+        - CSS: Estilos customizáveis, considere preprocessadores
+        - JavaScript: Vanilla JS ou bibliotecas leves para interatividade
+        - Responsividade: CSS Grid, Flexbox, media queries
+        - Acessibilidade: Seguir WCAG 2.1 básico (contrastes, alt text)
+        - Performance: Otimizar imagens, minificar CSS/JS
+        - Backend: Controllers servem páginas via Spring MVC se necessário

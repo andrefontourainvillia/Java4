@@ -1,0 +1,154 @@
+name: Nova Atividade Extracurricular
+description: Solicitar criação de uma nova atividade extracurricular
+title: "[NOVA ATIVIDADE] "
+labels: ["enhancement", "nova-atividade", "copilot-ready"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 📝 Solicitação de Nova Atividade Extracurricular
+        
+        Use este formulário para solicitar a criação de uma nova atividade extracurricular no sistema.
+        Preencha todos os campos obrigatórios para que o agente de codificação possa implementar a atividade sem necessidade de esclarecimentos adicionais.
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Nome da Atividade
+      description: Nome oficial da atividade que aparecerá no sistema
+      placeholder: ex. Clube de Robótica, Coral da Escola, Liga de Debates
+    validations:
+      required: true
+
+  - type: textarea
+    id: activity-description
+    attributes:
+      label: Descrição da Atividade
+      description: Descrição detalhada da atividade, objetivos e o que os alunos irão fazer
+      placeholder: Descreva os objetivos, metodologia e atividades que serão realizadas...
+      rows: 4
+    validations:
+      required: true
+
+  - type: dropdown
+    id: activity-category
+    attributes:
+      label: Categoria da Atividade
+      description: Escolha a categoria que melhor se adequa à atividade
+      options:
+        - Esportes e Recreação
+        - Artes e Cultura
+        - Ciências e Tecnologia
+        - Idiomas
+        - Voluntariado e Serviço Comunitário
+        - Liderança e Desenvolvimento Pessoal
+        - Outros
+    validations:
+      required: true
+
+  - type: input
+    id: max-participants
+    attributes:
+      label: Número Máximo de Participantes
+      description: Quantos alunos podem participar desta atividade?
+      placeholder: ex. 25
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: schedule-days
+    attributes:
+      label: Dias da Semana
+      description: Em quais dias da semana a atividade ocorrerá?
+      options:
+        - label: Segunda-feira
+        - label: Terça-feira
+        - label: Quarta-feira
+        - label: Quinta-feira
+        - label: Sexta-feira
+        - label: Sábado
+        - label: Domingo
+
+  - type: input
+    id: start-time
+    attributes:
+      label: Horário de Início
+      description: Horário de início da atividade (formato 24h)
+      placeholder: ex. 14:30
+    validations:
+      required: true
+
+  - type: input
+    id: end-time
+    attributes:
+      label: Horário de Término
+      description: Horário de término da atividade (formato 24h)
+      placeholder: ex. 16:00
+    validations:
+      required: true
+
+  - type: input
+    id: teacher-username
+    attributes:
+      label: Professor Responsável
+      description: Nome de usuário do professor que será responsável pela atividade
+      placeholder: ex. mrodriguez
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-requirements
+    attributes:
+      label: Requisitos Adicionais
+      description: Algum requisito especial ou consideração técnica?
+      placeholder: Necessita equipamentos especiais, acesso a laboratórios, materiais específicos, etc.
+      rows: 3
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioridade/Urgência
+      description: Quando esta atividade precisa estar disponível?
+      options:
+        - Baixa - Pode aguardar (mais de 2 semanas)
+        - Média - Próximas 2 semanas
+        - Alta - Esta semana
+        - Urgente - Hoje/amanhã
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ## ✅ Critérios de Aceitação (preenchido automaticamente)
+        
+        **Para o agente de codificação:**
+        
+        - [ ] Criar nova atividade no sistema com nome especificado
+        - [ ] Configurar descrição detalhada
+        - [ ] Definir categoria apropriada ou criar nova se necessário
+        - [ ] Configurar número máximo de participantes
+        - [ ] Configurar horários e dias da semana
+        - [ ] Atribuir professor responsável especificado
+        - [ ] Validar que não há conflitos de horário
+        - [ ] Testar criação e visualização da atividade
+        - [ ] Verificar que alunos podem se inscrever
+        
+        ## 🔧 Dicas de Implementação
+        
+        **Para o desenvolvedor:**
+        1. Use a entidade `Activity` em `domain/entities/Activity.java`
+        2. Implemente via `ActivityUseCase` em `application/usecases/`
+        3. Configure `ScheduleDetails` com os dias e horários
+        4. Valide se categoria existe ou crie nova via `ActivityCategoryUseCase`
+        5. Atribua professor via método `assignTeacher()` 
+        6. Teste com dados de migração se necessário
+        
+        ## 📋 Contexto Técnico
+        
+        - Sistema: Mergington High School Management System (Spring Boot + MongoDB)
+        - Arquitetura: Clean Architecture 
+        - Autenticação: Validar professor responsável existe no sistema
+        - Validações: Nome único, horários válidos, capacidade > 0
+        - Frontend: Estático em `src/main/resources/static/`
