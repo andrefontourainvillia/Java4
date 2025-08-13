@@ -1,11 +1,5 @@
 package com.mergingtonhigh.schoolmanagement.integration;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -15,23 +9,36 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 
 class ExternalServiceIntegrationTest {
 
-    @RegisterExtension
-    static WireMockExtension wireMock = WireMockExtension.newInstance()
-            .options(wireMockConfig().port(8089))
-            .build();
+    private WireMockServer wireMockServer;
+
+    @BeforeEach
+    void setUp() {
+        wireMockServer = new WireMockServer(8089);
+        wireMockServer.start();
+        WireMock.configureFor("localhost", 8089);
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (wireMockServer != null) {
+            wireMockServer.stop();
+        }
+    }
 
     @Test
     void shouldMockExternalNotificationService() throws IOException, InterruptedException {
         // Setup mock for external notification service
-        stubFor(post(urlEqualTo("/api/notifications"))
-                .willReturn(aResponse()
+        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api/notifications"))
+                .willReturn(WireMock.aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody("{\"message\": \"Notification sent successfully\", \"id\": \"12345\"}")));
@@ -56,14 +63,14 @@ class ExternalServiceIntegrationTest {
     @Test
     void shouldMockExternalAuthenticationService() throws IOException, InterruptedException {
         // Setup mock for external authentication service
-        stubFor(get(urlEqualTo("/api/auth/validate?token=valid-token"))
-                .willReturn(aResponse()
+        wireMockServer.stubFor(WireMock.get(WireMock.urlEqualTo("/api/auth/validate?token=valid-token"))
+                .willReturn(WireMock.aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody("{\"valid\": true, \"username\": \"teacher1\", \"role\": \"TEACHER\"}")));
 
-        stubFor(get(urlEqualTo("/api/auth/validate?token=invalid-token"))
-                .willReturn(aResponse()
+        wireMockServer.stubFor(WireMock.get(WireMock.urlEqualTo("/api/auth/validate?token=invalid-token"))
+                .willReturn(WireMock.aResponse()
                         .withStatus(401)
                         .withHeader("Content-Type", "application/json")
                         .withBody("{\"valid\": false, \"error\": \"Invalid token\"}")));
@@ -96,8 +103,8 @@ class ExternalServiceIntegrationTest {
     @Test
     void shouldMockStudentRegistrationVerificationService() throws IOException, InterruptedException {
         // Setup mock for student verification service
-        stubFor(post(urlEqualTo("/api/students/verify"))
-                .willReturn(aResponse()
+        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo("/api/students/verify"))
+                .willReturn(WireMock.aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody("{\"verified\": true, \"studentId\": \"ST001\", \"name\": \"John Doe\"}")));
