@@ -1,0 +1,230 @@
+name: Relatório de Bug
+description: Relatar um problema ou erro no sistema
+title: "[BUG] "
+labels: ["bug", "copilot-ready"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🐛 Relatório de Bug/Erro
+        
+        Use este formulário para relatar problemas técnicos, erros ou comportamentos inesperados no sistema.
+        Forneça o máximo de detalhes possível para facilitar a correção.
+
+  - type: dropdown
+    id: bug-category
+    attributes:
+      label: Categoria do Bug
+      description: Em que área do sistema o problema está ocorrendo?
+      options:
+        - Login/Autenticação
+        - Criação de atividades
+        - Inscrição de alunos
+        - Visualização de cronograma
+        - Interface do usuário
+        - Performance/Lentidão
+        - Dados incorretos
+        - Funcionalidade não disponível
+        - Outros
+    validations:
+      required: true
+
+  - type: textarea
+    id: bug-summary
+    attributes:
+      label: Resumo do Problema
+      description: Descreva brevemente o que está acontecendo
+      placeholder: "Ex: Sistema não permite login mesmo com credenciais corretas"
+      rows: 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Comportamento Esperado
+      description: O que deveria acontecer normalmente?
+      placeholder: "Ex: Após inserir usuário e senha corretos, deveria acessar o sistema"
+      rows: 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Comportamento Atual (Problemático)
+      description: O que está acontecendo de errado?
+      placeholder: "Ex: Mostra mensagem 'Credenciais inválidas' mesmo com dados corretos"
+      rows: 3
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Passos para Reproduzir
+      description: Liste os passos exatos para reproduzir o problema
+      placeholder: |
+        1. Vá para a página de login
+        2. Digite usuário: professor123
+        3. Digite senha: minhasenha
+        4. Clique em "Entrar"
+        5. Observe o erro que aparece
+      rows: 5
+    validations:
+      required: true
+
+  - type: textarea
+    id: error-messages
+    attributes:
+      label: Mensagens de Erro
+      description: Copie exatamente qualquer mensagem de erro que aparece
+      placeholder: "Cole aqui todas as mensagens de erro, warnings, etc."
+      rows: 3
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: Frequência do Problema
+      description: Com que frequência este bug acontece?
+      options:
+        - Sempre (100% das vezes)
+        - Frequentemente (mais de 50% das vezes)
+        - Às vezes (menos de 50% das vezes)
+        - Raramente (poucas vezes)
+        - Primeira vez que acontece
+    validations:
+      required: true
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Navegador
+      description: Em qual navegador o problema ocorre?
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - Outro navegador
+        - Todos os navegadores
+        - Não sei/não relevante
+
+  - type: dropdown
+    id: device-type
+    attributes:
+      label: Tipo de Dispositivo
+      description: Em que tipo de dispositivo o problema acontece?
+      options:
+        - Computador/Desktop
+        - Notebook/Laptop
+        - Tablet
+        - Celular
+        - Todos os dispositivos
+        - Não sei
+
+  - type: input
+    id: user-account
+    attributes:
+      label: Conta de Usuário Afetada (se relevante)
+      description: Nome de usuário ou tipo de conta onde o problema ocorre
+      placeholder: "ex: mrodriguez, ou 'qualquer professor', ou 'contas de admin'"
+
+  - type: dropdown
+    id: impact-severity
+    attributes:
+      label: Severidade do Impacto
+      description: Qual o impacto deste bug no uso do sistema?
+      options:
+        - Baixa - Pequeno inconveniente
+        - Média - Funcionalidade degradada mas utilizável
+        - Alta - Funcionalidade principal quebrada
+        - Crítica - Sistema inutilizável
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: affected-functionality
+    attributes:
+      label: Funcionalidades Afetadas
+      description: Que funcionalidades estão sendo impactadas?
+      options:
+        - label: Login/Logout
+        - label: Criação de atividades
+        - label: Edição de atividades
+        - label: Inscrição de alunos
+        - label: Cancelamento de inscrições
+        - label: Visualização de listas
+        - label: Cronograma/Horários
+        - label: Relatórios
+        - label: Outras funcionalidades
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Solução Temporária (se houver)
+      description: Existe alguma forma de contornar o problema?
+      placeholder: "Ex: Usar outro navegador, aguardar alguns minutos, etc."
+      rows: 2
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Urgência para Correção
+      description: Quando este bug precisa ser corrigido?
+      options:
+        - Baixa - Pode aguardar correção
+        - Média - Precisa ser corrigido esta semana
+        - Alta - Precisa ser corrigido hoje/amanhã
+        - Crítica - Sistema está inoperante
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Contexto Adicional
+      description: Qualquer outra informação que possa ajudar na correção
+      placeholder: "Quando começou, condições específicas, dados técnicos..."
+      rows: 3
+
+  - type: markdown
+    attributes:
+      value: |
+        ## ✅ Critérios de Aceitação (preenchido automaticamente)
+        
+        **Para o agente de codificação:**
+        
+        - [ ] Reproduzir o bug seguindo os passos descritos
+        - [ ] Identificar a causa raiz no código
+        - [ ] Analisar logs para stacktraces/erros relacionados
+        - [ ] Implementar correção mínima necessária
+        - [ ] Verificar que correção não quebra outras funcionalidades
+        - [ ] Adicionar testes para prevenir regressão (se aplicável)
+        - [ ] Testar em diferentes cenários/navegadores se relevante
+        - [ ] Verificar que mensagens de erro são informativas
+        - [ ] Validar que comportamento agora está correto
+        - [ ] Documentar mudanças se necessário
+        
+        ## 🔧 Dicas de Implementação
+        
+        **Para o desenvolvedor:**
+        1. Examine logs da aplicação para stacktraces
+        2. Ative debug logging se necessário: `logging.level.root=DEBUG`
+        3. Use breakpoints para debuggar fluxo do código
+        4. Verifique validações de domínio em entidades
+        5. Examine controllers para tratamento de erro HTTP
+        6. Validar `@ExceptionHandler` está capturando erros
+        7. Testar com Postman/curl para isolar frontend vs backend
+        8. Verificar configurações Spring Security se problema de auth
+        
+        ## 📋 Contexto Técnico
+        
+        - Logs: `target/` directory ou console da aplicação
+        - Debugging: Use `application-dev.properties` para desenvolvimento
+        - Testes: Execute `mvn test` para verificar regressões
+        - Frontend: Estático em `src/main/resources/static/`
+        - Backend: Clean Architecture - verifique camada apropriada
+        - Database: MongoDB - verifique conexão e dados
+        - Responses: Use `Map.of("detail", message)` para erros HTTP

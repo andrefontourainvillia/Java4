@@ -1,0 +1,224 @@
+name: Solicitação de Nova Funcionalidade
+description: Solicitar uma nova funcionalidade ou melhoria no sistema
+title: "[FEATURE] "
+labels: ["enhancement", "nova-funcionalidade", "copilot-ready"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 💡 Solicitação de Nova Funcionalidade
+        
+        Use este formulário para solicitar novas funcionalidades, melhorias ou recursos que ainda não existem no sistema.
+        Seja específico sobre o que precisa e como deveria funcionar.
+
+  - type: input
+    id: feature-title
+    attributes:
+      label: Nome da Funcionalidade
+      description: Título claro e descritivo para a nova funcionalidade
+      placeholder: "ex: Relatório de Frequência dos Alunos, Sistema de Notificações, Calendário Visual"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature-category
+    attributes:
+      label: Categoria da Funcionalidade
+      description: Em qual área do sistema esta funcionalidade se encaixaria?
+      options:
+        - Gerenciamento de Atividades
+        - Gerenciamento de Alunos
+        - Relatórios e Estatísticas
+        - Notificações e Comunicação
+        - Interface do Usuário
+        - Autenticação e Segurança
+        - Cronograma e Calendário
+        - Administração do Sistema
+        - Importação/Exportação de Dados
+        - Outros
+    validations:
+      required: true
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Descrição da Funcionalidade
+      description: Descreva detalhadamente o que esta funcionalidade deveria fazer
+      placeholder: |
+        Exemplo: "Um sistema que permita professores marcarem presença dos alunos em cada sessão da atividade, gerando relatórios automáticos de frequência para análise."
+      rows: 4
+    validations:
+      required: true
+
+  - type: textarea
+    id: user-story
+    attributes:
+      label: História do Usuário
+      description: Como professor/usuário, descreva como usaria esta funcionalidade
+      placeholder: |
+        "Como professor do Clube de Xadrez, eu gostaria de poder marcar presença dos alunos a cada encontro, para que eu possa acompanhar o engajamento e gerar relatórios de participação para a coordenação."
+      rows: 3
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Critérios de Aceitação
+      description: Liste especificamente o que esta funcionalidade deve fazer para ser considerada completa
+      placeholder: |
+        - [ ] Professor pode acessar lista de alunos inscritos na atividade
+        - [ ] Professor pode marcar presença/ausência para cada aluno
+        - [ ] Sistema salva data e horário de cada registro de presença
+        - [ ] Professor pode visualizar relatório de frequência por aluno
+        - [ ] Relatório pode ser exportado em PDF ou Excel
+      rows: 5
+    validations:
+      required: true
+
+  - type: dropdown
+    id: user-type
+    attributes:
+      label: Tipo de Usuário Principal
+      description: Quem seria o usuário principal desta funcionalidade?
+      options:
+        - Professores
+        - Administradores
+        - Alunos
+        - Todos os usuários
+        - Sistema automático
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority-justification
+    attributes:
+      label: Justificativa de Prioridade
+      description: Por que esta funcionalidade é importante?
+      options:
+        - Essencial para operação diária
+        - Melhoraria significativamente o trabalho
+        - Resolveria problema atual importante
+        - Facilitaria tarefas administrativas
+        - Melhoraria experiência do usuário
+        - Requisito regulatório/institucional
+        - Nice to have (seria bom ter)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: integration-needs
+    attributes:
+      label: Necessidades de Integração
+      description: Esta funcionalidade precisa se integrar com que partes do sistema?
+      options:
+        - label: Sistema de atividades existente
+        - label: Base de dados de alunos
+        - label: Sistema de autenticação
+        - label: Geração de relatórios
+        - label: Interface web atual
+        - label: Sistema de notificações
+        - label: Cronograma/calendário
+        - label: Não precisa integração especial
+
+  - type: textarea
+    id: technical-requirements
+    attributes:
+      label: Requisitos Técnicos (se houver)
+      description: Algum requisito técnico específico ou limitação?
+      placeholder: |
+        Ex: "Deve funcionar offline", "Precisa exportar para Excel", "Deve enviar emails automáticos", etc.
+      rows: 3
+
+  - type: dropdown
+    id: complexity-estimate
+    attributes:
+      label: Estimativa de Complexidade
+      description: Na sua opinião, quão complexa seria esta funcionalidade?
+      options:
+        - Simples - Poucas telas/funcionalidades
+        - Média - Funcionalidade moderada
+        - Complexa - Muitas partes envolvidas
+        - Muito complexa - Mudanças significativas
+        - Não sei estimar
+
+  - type: input
+    id: similar-systems
+    attributes:
+      label: Exemplos de Sistemas Similares (opcional)
+      description: Conhece algum sistema que tenha funcionalidade parecida?
+      placeholder: "ex: Google Classroom, Moodle, sistema da escola anterior, etc."
+
+  - type: dropdown
+    id: timeline-need
+    attributes:
+      label: Necessidade de Prazo
+      description: Quando seria ideal ter esta funcionalidade?
+      options:
+        - Sem pressa - quando possível
+        - Próximo mês seria bom
+        - Próximas semanas
+        - É urgente - preciso logo
+        - Para data específica (especificar em observações)
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternative-solutions
+    attributes:
+      label: Soluções Alternativas Consideradas
+      description: Pensou em outras formas de resolver esta necessidade?
+      placeholder: |
+        Ex: "Atualmente faço isso manualmente em planilhas, mas seria muito mais eficiente no sistema"
+      rows: 3
+
+  - type: textarea
+    id: additional-notes
+    attributes:
+      label: Observações Adicionais
+      description: Qualquer outra informação relevante sobre esta funcionalidade
+      placeholder: "Contexto adicional, detalhes importantes, referências..."
+      rows: 3
+
+  - type: markdown
+    attributes:
+      value: |
+        ## ✅ Critérios de Aceitação (preenchido automaticamente)
+        
+        **Para o agente de codificação:**
+        
+        - [ ] Analisar viabilidade técnica da funcionalidade
+        - [ ] Identificar entidades e use cases necessários
+        - [ ] Mapear integrações com sistema existente
+        - [ ] Projetar interfaces necessárias (API/Web)
+        - [ ] Implementar lógica de domínio apropriada
+        - [ ] Criar controllers e endpoints se necessário
+        - [ ] Implementar validações de negócio
+        - [ ] Adicionar testes para nova funcionalidade
+        - [ ] Verificar que não quebra funcionalidades existentes
+        - [ ] Documentar nova funcionalidade
+        
+        ## 🔧 Dicas de Implementação
+        
+        **Para o desenvolvedor:**
+        1. Siga Clean Architecture - comece pelo domínio
+        2. Crie entidades/value objects se necessário
+        3. Implemente use cases na camada de aplicação
+        4. Adicione repositories se preciso de persistência
+        5. Implemente controllers para exposição via API
+        6. Adicione frontend estático se necessário
+        7. Use mappers para conversão entre camadas
+        8. Mantenha validações no domínio
+        9. Considere migrations Mongock para dados iniciais
+        
+        ## 📋 Contexto Técnico
+        
+        - Arquitetura: Clean Architecture com Spring Boot
+        - Database: MongoDB com Spring Data
+        - Frontend: Recursos estáticos em `src/main/resources/static/`
+        - API: REST controllers em `presentation/controllers/`
+        - Testes: JUnit 5 + Mockito + Testcontainers
+        - Migrations: Mongock para dados iniciais
+        - Validações: Bean Validation + validações de domínio
+        - Autenticação: Basic auth via form data

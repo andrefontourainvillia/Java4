@@ -1,0 +1,188 @@
+name: Problemas com Inscrição de Alunos
+description: Relatar problemas com inscrições de alunos em atividades
+title: "[INSCRIÇÃO ALUNO] "
+labels: ["bug", "inscricao-aluno", "copilot-ready"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 👥 Problemas com Inscrição de Alunos
+        
+        Use este formulário para relatar problemas relacionados à inscrição, cancelamento ou gerenciamento de alunos em atividades extracurriculares.
+
+  - type: dropdown
+    id: problem-type
+    attributes:
+      label: Tipo de Problema
+      description: Qual é o problema principal?
+      options:
+        - Aluno não consegue se inscrever
+        - Aluno não consegue cancelar inscrição
+        - Aluno aparece inscrito mas não deveria estar
+        - Aluno não aparece na lista mas deveria estar
+        - Problemas com capacidade/vagas
+        - Sistema permite inscrição além da capacidade
+        - Duplicação de inscrições
+        - Outros problemas de inscrição
+    validations:
+      required: true
+
+  - type: input
+    id: activity-name
+    attributes:
+      label: Nome da Atividade
+      description: Nome da atividade onde está ocorrendo o problema
+      placeholder: ex. Clube de Xadrez, Aula de Programação
+    validations:
+      required: true
+
+  - type: input
+    id: student-email
+    attributes:
+      label: Email do Aluno (se aplicável)
+      description: Email do aluno específico envolvido no problema
+      placeholder: ex. joao.silva@estudante.mergingtonhigh.edu
+
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: Descrição Detalhada do Problema
+      description: Descreva exatamente o que está acontecendo
+      placeholder: |
+        Exemplo: "O aluno João Silva tentou se inscrever no Clube de Xadrez, mas recebeu erro de 'atividade lotada' mesmo havendo vagas disponíveis. A atividade mostra 15/25 participantes."
+      rows: 4
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Passos para Reproduzir o Problema
+      description: Liste os passos específicos que levam ao problema
+      placeholder: |
+        1. Aluno acessa a página da atividade
+        2. Clica no botão "Inscrever-se"
+        3. Preenche os dados necessários
+        4. Clica em confirmar
+        5. Sistema mostra erro...
+      rows: 4
+    validations:
+      required: true
+
+  - type: textarea
+    id: error-message
+    attributes:
+      label: Mensagem de Erro (se houver)
+      description: Copie exatamente qualquer mensagem de erro que aparece
+      placeholder: Cole aqui a mensagem de erro exata...
+      rows: 2
+
+  - type: input
+    id: current-capacity
+    attributes:
+      label: Capacidade Atual da Atividade
+      description: Quantos alunos estão inscritos/total de vagas (ex. 15/25)
+      placeholder: ex. 20/30
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: Frequência do Problema
+      description: Com que frequência isso acontece?
+      options:
+        - Acontece sempre
+        - Acontece frequentemente
+        - Acontece às vezes
+        - Primeira vez que notei
+        - Não tenho certeza
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: affected-users
+    attributes:
+      label: Usuários Afetados
+      description: Quem está sendo afetado por este problema?
+      options:
+        - label: Um aluno específico
+        - label: Vários alunos da mesma turma
+        - label: Todos os alunos tentando se inscrever
+        - label: Apenas alunos novos
+        - label: Apenas alunos já cadastrados
+        - label: Não tenho certeza
+
+  - type: dropdown
+    id: browser-device
+    attributes:
+      label: Navegador/Dispositivo (se relevante)
+      description: Em qual navegador/dispositivo o problema ocorre?
+      options:
+        - (Não relevante/não sei)
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - Celular (iOS)
+        - Celular (Android)
+        - Tablet
+        - Computador
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Urgência
+      description: Quão urgente é resolver este problema?
+      options:
+        - Baixa - Pode aguardar resolução
+        - Média - Precisa ser resolvido em alguns dias
+        - Alta - Está impactando vários alunos
+        - Crítica - Sistema inutilizável para inscrições
+    validations:
+      required: true
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Solução Temporária (se houver)
+      description: Existe alguma forma de contornar o problema temporariamente?
+      placeholder: Ex. "Fiz a inscrição manualmente pelo sistema administrativo"
+      rows: 2
+
+  - type: markdown
+    attributes:
+      value: |
+        ## ✅ Critérios de Aceitação (preenchido automaticamente)
+        
+        **Para o agente de codificação:**
+        
+        - [ ] Reproduzir o problema descrito
+        - [ ] Identificar a causa raiz no código
+        - [ ] Validar capacidade atual vs configurada da atividade
+        - [ ] Verificar lógica de inscrição em `Activity.addParticipant()`
+        - [ ] Checar validações em `StudentRegistrationUseCase`
+        - [ ] Corrigir lógica de negócio problemática
+        - [ ] Verificar se email do aluno está válido
+        - [ ] Testar inscrição e cancelamento funcionam
+        - [ ] Verificar contadores de capacidade corretos
+        - [ ] Validar que duplicações não ocorrem
+        
+        ## 🔧 Dicas de Implementação
+        
+        **Para o desenvolvedor:**
+        1. Verifique método `Activity.canAddParticipant()` e `addParticipant()`
+        2. Examine `StudentRegistrationUseCase.registerStudentForActivity()`
+        3. Valide se `getCurrentParticipantCount()` está correto
+        4. Cheque validação de email via `Email` value object
+        5. Verifique se `participantEmails` list está sendo sincronizada
+        6. Examine logs para stacktraces de erros
+        7. Teste cenários edge (capacidade = 0, emails duplicados, etc.)
+        
+        ## 📋 Contexto Técnico
+        
+        - Entidade principal: `Activity` com lista `participantEmails`
+        - Use case: `StudentRegistrationUseCase`
+        - Validações: `Email.value()` e `Activity.isParticipantRegistered()`
+        - Capacidade: `maxParticipants` vs `participantEmails.size()`
+        - Frontend: Formulários em `src/main/resources/static/`
+        - Erros: Retornar HTTP 400 com `Map.of("detail", message)`
